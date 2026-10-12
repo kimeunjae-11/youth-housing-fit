@@ -24,9 +24,9 @@ youth-housing-fit/
 | 이름 | 역할 | GitHub |
 | --- | --- | --- |
 | 김은재 | FE/UI | [@kimeunjae-11](https://github.com/kimeunjae-11) |
-| 박지은 | BE/DATA | @qlusdeirx(https://github.com/qlusdeirx) |
-| 권지민 | VIDEO/DATA | @jiminkweon(https://github.com/jiminkweon) |
-| 이유빈 | FE/PPT | @ekq5415(https://github.com/ekq5415) |
+| 박지은 | BE/DATA | [@qlusdeirx](https://github.com/qlusdeirx) |
+| 권지민 | VIDEO/DATA | [@jiminkweon](https://github.com/jiminkweon) |
+| 이유빈 | FE/PPT | [@ekq5415](https://github.com/ekq5415) |
 
 ## 협업 규칙
 
