@@ -1,3 +1,14 @@
+import { Route, Routes } from 'react-router-dom'
+import ConditionPage from './pages/ConditionPage.jsx'
+import RecommendPage from './pages/RecommendPage.jsx'
+import ResultPage from './pages/ResultPage.jsx'
+
 export default function App() {
-  return <h1 className="p-8 text-2xl font-bold">청년주거 핏</h1>
+  return (
+    <Routes>
+      <Route path="/" element={<ConditionPage />} />
+      <Route path="/result" element={<ResultPage />} />
+      <Route path="/recommend" element={<RecommendPage />} />
+    </Routes>
+  )
 }
