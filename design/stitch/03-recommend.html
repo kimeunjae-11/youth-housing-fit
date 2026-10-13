@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="ko" style="">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>오산시 청년주거 핏 - 자격 진단</title>
+    <!-- Pretendard Font & Material Symbols Outlined -->
+    <link
+      as="style"
+      crossorigin=""
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      @layer base {
+        html,
+        body {
+          margin: 0;
+          padding: 0;
+          font-family:
+            "Pretendard",
+            -apple-system,
+            BlinkMacSystemFont,
+            system-ui,
+            Roboto,
+            sans-serif;
+        }
+        body {
+          overflow: hidden;
+        }
+      }
+      .material-symbols-outlined {
+        font-variation-settings:
+          "FILL" 0,
+          "wght" 450,
+          "GRAD" 0,
+          "opsz" 24;
+        vertical-align: middle;
+      }
+    </style>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <meta content="web_standard" name="shell-type" />
+  </head>
+  <body
+    class="bg-[#FFF9F5] text-[#2B2420] antialiased h-screen max-h-[1080px] flex flex-col justify-between overflow-hidden select-none font-['Pretendard']"
+  >
+    <!-- Full Viewport Header -->
+    <header
+      class="w-full shrink-0 border-b border-[#F2E5DC]/80 bg-[#FFF9F5]/90 backdrop-blur-sm z-30"
+    >
+      <div class="h-16 w-full px-12 md:px-16 flex items-center justify-between">
+        <!-- Left: Logo & Pill Tag -->
+        <div class="flex items-center gap-3.5">
+          <a class="flex items-center gap-2.5 group cursor-pointer" href="#">
+            <div
+              class="w-9 h-9 rounded-full bg-[#FFF0E8] flex items-center justify-center text-[#FFA98A] transition-transform group-hover:scale-105"
+            >
+              <span
+                class="material-symbols-outlined text-[20px]"
+                style="font-variation-settings: &quot;FILL&quot; 1"
+                >roofing</span
+              >
+            </div>
+            <span class="text-[19px] font-bold tracking-tight text-[#2B2420]"
+              >청년주거 핏</span
+            >
+          </a>
+        </div>
+        <!-- Right: Nav Items & Profile -->
+        <div class="flex items-center gap-5">
+          <nav class="flex items-center gap-2">
+            <a
+              class="px-4 py-1.5 rounded-full bg-primary-container text-on-surface text-sm font-semibold transition-all shadow-sm"
+              href="#"
+              >자격 진단</a
+            >
+          </nav>
+        </div>
+      </div>
+    </header>
+    <!-- Main Body: Centered Container fitting comfortably inside 1080px with no scroll -->
+    <main class="w-full flex-1 flex items-center justify-center px-8 py-2">
+      <div
+        class="flex flex-col w-full h-full max-h-[calc(1080px-112px)] justify-center"
+      >
+        <!-- Interactive Top Nav State Syncer: Screen 7 3rd Step active indicator -->
+        <script>
+          (function syncHeaderNav() {
+            const navLinks = document.querySelectorAll("header nav a");
+            if (navLinks.length >= 2) {
+              navLinks[0].className =
+                "px-4 py-1.5 rounded-full text-secondary hover:text-on-surface hover:bg-surface-container-low text-sm font-medium transition-all";
+              navLinks[1].className =
+                "px-4 py-1.5 rounded-full bg-primary-container text-on-surface text-sm font-semibold transition-all shadow-sm";
+            }
+          })();
+        </script>
+        <!-- Centered Content Grid: 1280px container -->
+        <div
+          class="w-full max-w-[1280px] mx-auto px-6 py-2 flex items-center justify-between gap-10"
+        >
+          <!-- LEFT COLUMN (Approx 38-40%) -->
+          <div class="w-[430px] shrink-0 flex flex-col justify-between py-1">
+            <div class="">
+              <!-- Small Badge -->
+
+              <!-- Headline -->
+              <h1
+                class="text-[44px] font-bold text-[#2B2420] tracking-tight leading-[1.22] mb-3"
+              >
+                행복주택 청년계층, 신청 가능해요
+              </h1>
+              <!-- Subtitle -->
+              <p
+                class="text-[15.5px] text-[#6F645D] leading-relaxed mb-7 max-w-md"
+              >
+                입력하신 조건을 모두 통과한 오산시 공고만 보여줍니다.
+              </p>
+              <!-- Vertical 3-Step Tracker (Matches Screen 9 styling exactly) -->
+              <div class="flex flex-col relative space-y-1.5 mb-7">
+                <!-- Step 1: Completed -->
+                <div class="flex items-center gap-3.5 p-2.5 rounded-2xl">
+                  <div
+                    class="w-7 h-7 rounded-full bg-[#FFA98A] text-white flex items-center justify-center text-xs font-bold shrink-0"
+                  >
+                    <span class="material-symbols-outlined text-[16px]"
+                      >check</span
+                    >
+                  </div>
+                  <div class="flex-1 flex items-center justify-between">
+                    <span class="text-[14.5px] font-medium text-[#6F645D]"
+                      >조건 입력</span
+                    >
+                  </div>
+                </div>
+                <!-- Connecting line -->
+                <div class="w-0.5 h-3.5 bg-[#F2E5DC] ml-[1.1rem] -my-0.5"></div>
+                <!-- Step 2: Completed -->
+                <div class="flex items-center gap-3.5 p-2.5 rounded-2xl">
+                  <div
+                    class="w-7 h-7 rounded-full bg-[#FFA98A] text-white flex items-center justify-center text-xs font-bold shrink-0"
+                  >
+                    <span class="material-symbols-outlined text-[16px]"
+                      >check</span
+                    >
+                  </div>
+                  <div class="flex-1 flex items-center justify-between">
+                    <span class="text-[14.5px] font-medium text-[#6F645D]"
+                      >자격 판정</span
+                    >
+                  </div>
+                </div>
+                <!-- Connecting line -->
+                <div class="w-0.5 h-3.5 bg-[#F2E5DC] ml-[1.1rem] -my-0.5"></div>
+                <!-- Step 3: Active Card -->
+                <div
+                  class="flex items-center gap-3.5 bg-white border border-[#F5E8DF] p-3 rounded-2xl shadow-[0_4px_16px_rgba(217,107,72,0.06)]"
+                >
+                  <div
+                    class="w-7 h-7 rounded-full bg-[#FFA98A] text-white flex items-center justify-center text-xs font-bold shrink-0"
+                  >
+                    3
+                  </div>
+                  <div class="flex-1 flex items-center justify-between">
+                    <span class="text-[15px] font-bold text-[#2B2420]"
+                      >맞춤 추천</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Bottom Notice Card (Matching Screen 9 style) -->
+          </div>
+          <!-- RIGHT COLUMN (Approx 60% flex-1): Housing Listings Container -->
+          <div class="flex-1 min-w-0 flex flex-col gap-3 py-1">
+            <!-- Top Row: Count & Sort Filter -->
+            <div class="flex items-center justify-between text-xs pb-1">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span
+                  class="px-3 py-1 rounded-full bg-surface-container-low text-primary font-semibold shadow-2xs flex items-center gap-1"
+                  ><span class="material-symbols-outlined text-[13px]"
+                    >check</span
+                  >행복주택</span
+                ><span
+                  class="px-3 py-1 rounded-full bg-surface-container-lowest border border-surface-variant text-on-surface font-medium hover:bg-surface transition-colors"
+                  >오산시 전체</span
+                ><span
+                  class="px-3 py-1 rounded-full bg-surface-container-lowest border border-surface-variant text-on-surface font-medium hover:bg-surface transition-colors"
+                  >임대료 상한 이하</span
+                >
+              </div>
+              <div class="flex items-center gap-3">
+                <button
+                  class="inline-flex items-center gap-1 text-secondary hover:text-on-surface underline font-label-sm text-label-sm transition-colors cursor-pointer"
+                  onclick="handleConditionChange()"
+                >
+                  <span class="material-symbols-outlined text-[13px]">tune</span
+                  >조건 바꾸기
+                </button>
+                <div class="relative">
+                  <button
+                    class="inline-flex items-center gap-2 bg-surface-container-lowest px-3.5 py-1.5 rounded-xl border border-surface-variant text-on-surface font-label-md text-label-md font-medium shadow-sm hover:bg-surface transition-all"
+                    id="sortDropdownBtn"
+                    onclick="toggleSortMenu()"
+                  >
+                    <span
+                      class="material-symbols-outlined text-[16px] text-secondary"
+                      >sort</span
+                    ><span id="currentSortLabel" class=""
+                      >월 임대료 낮은 순</span
+                    ><span
+                      class="material-symbols-outlined text-[16px] text-secondary"
+                      >expand_more</span
+                    >
+                  </button>
+                  <div
+                    class="hidden absolute right-0 mt-1.5 w-44 bg-surface-container-lowest rounded-xl shadow-lg border border-surface-variant py-1.5 z-40"
+                    id="sortMenu"
+                  >
+                    <button
+                      class="w-full text-left px-3.5 py-1.5 text-xs text-on-surface hover:bg-surface-container-low font-medium"
+                      onclick="setSort('월 임대료 낮은 순')"
+                    >
+                      월 임대료 낮은 순</button
+                    ><button
+                      class="w-full text-left px-3.5 py-1.5 text-xs text-secondary hover:bg-surface-container-low font-medium"
+                      onclick="setSort('보증금 낮은 순')"
+                    >
+                      보증금 낮은 순</button
+                    ><button
+                      class="w-full text-left px-3.5 py-1.5 text-xs text-secondary hover:bg-surface-container-low font-medium"
+                      onclick="setSort('전용면적 넓은 순')"
+                    >
+                      전용면적 넓은 순</button
+                    ><button
+                      class="w-full text-left px-3.5 py-1.5 text-xs text-secondary hover:bg-surface-container-low font-medium"
+                      onclick="setSort('마감 임박 순')"
+                    >
+                      마감 임박 순
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Filter Chips Row -->
+
+            <!-- 4 Compact Horizontal Listing Cards Stacked Vertically -->
+            <div class="flex flex-col gap-2">
+              <!-- Listing Card 1 -->
+              <article
+                class="flex items-center justify-between gap-5 p-4 rounded-[20px] bg-white border border-[#F5E8DF] shadow-[0_6px_20px_rgba(160,100,70,0.05)] hover:shadow-[0_8px_26px_rgba(160,100,70,0.08)] hover:-translate-y-0.5 transition-all"
+              >
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-2 mb-1.5">
+                    <span
+                      class="inline-flex px-2 py-0.5 rounded-full text-xs font-semibold bg-[#FFEFE8] text-[#D8623A] whitespace-nowrap"
+                      >임대료 최저</span
+                    ><span
+                      class="inline-flex px-2 py-0.5 rounded-full text-xs font-semibold bg-surface-container-low text-primary whitespace-nowrap"
+                      >마감 D-8</span
+                    >
+                  </div>
+                  <h2
+                    class="text-[18px] font-bold text-[#2E2824] truncate whitespace-nowrap mb-1"
+                  >
+                    오산 세교 행복주택 A단지
+                  </h2>
+                  <p
+                    class="text-sm text-[#7D7068] whitespace-nowrap overflow-hidden text-ellipsis"
+                  >
+                    세교동 · 26㎡
+                  </p>
+                </div>
+                <div class="text-right shrink-0 whitespace-nowrap pl-2">
+                  <div class="text-xl font-bold text-[#2E2824]">월 14만원</div>
+                  <div class="text-sm text-[#7D7068]">보증금 2,400만원</div>
+                </div>
+                <div class="shrink-0">
+                  <button
+                    class="px-4 py-2.5 rounded-full bg-[#FFEFE8] hover:bg-[#FDE2D6] text-[#D8623A] font-semibold text-sm transition-colors flex items-center gap-1 cursor-pointer"
+                    onclick="openListingModal('오산 세교 행복주택 A단지')"
+                  >
+                    <span class="">공고문 보기</span
+                    ><span class="text-[15px] leading-none font-bold">↗</span>
+                  </button>
+                </div>
+              </article>
+
+              <!-- Listing Card 2 -->
+              <article
+                class="flex items-center justify-between gap-5 p-4 rounded-[20px] bg-white border border-[#F5E8DF] shadow-[0_6px_20px_rgba(160,100,70,0.05)] hover:shadow-[0_8px_26px_rgba(160,100,70,0.08)] hover:-translate-y-0.5 transition-all"
+              >
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-2 mb-1.5">
+                    <span
+                      class="inline-flex px-2 py-0.5 rounded-full text-xs font-semibold bg-surface-container-low text-primary whitespace-nowrap"
+                      >마감 D-12</span
+                    >
+                  </div>
+                  <h2
+                    class="text-[18px] font-bold text-[#2E2824] truncate whitespace-nowrap mb-1"
+                  >
+                    오산 궐동 행복주택 청년형
+                  </h2>
+                  <p
+                    class="text-sm text-[#7D7068] whitespace-nowrap overflow-hidden text-ellipsis"
+                  >
+                    궐동 · 21㎡
+                  </p>
+                </div>
+                <div class="text-right shrink-0 whitespace-nowrap pl-2">
+                  <div class="text-xl font-bold text-[#2E2824]">월 16만원</div>
+                  <div class="text-sm text-[#7D7068]">보증금 2,800만원</div>
+                </div>
+                <div class="shrink-0">
+                  <button
+                    class="px-4 py-2.5 rounded-full bg-[#FFEFE8] hover:bg-[#FDE2D6] text-[#D8623A] font-semibold text-sm transition-colors flex items-center gap-1 cursor-pointer"
+                    onclick="openListingModal('오산 궐동 행복주택 청년형')"
+                  >
+                    <span class="">공고문 보기</span
+                    ><span class="text-[15px] leading-none font-bold">↗</span>
+                  </button>
+                </div>
+              </article>
+
+              <!-- Listing Card 3 -->
+              <article
+                class="flex items-center justify-between gap-5 p-4 rounded-[20px] bg-white border border-[#F5E8DF] shadow-[0_6px_20px_rgba(160,100,70,0.05)] hover:shadow-[0_8px_26px_rgba(160,100,70,0.08)] hover:-translate-y-0.5 transition-all"
+              >
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-2 mb-1.5">
+                    <span
+                      class="inline-flex px-2 py-0.5 rounded-full text-xs font-semibold bg-surface-container-low text-primary whitespace-nowrap"
+                      >마감 D-15</span
+                    >
+                  </div>
+                  <h2
+                    class="text-[18px] font-bold text-[#2E2824] truncate whitespace-nowrap mb-1"
+                  >
+                    오산 청호 행복주택 B단지
+                  </h2>
+                  <p
+                    class="text-sm text-[#7D7068] whitespace-nowrap overflow-hidden text-ellipsis"
+                  >
+                    청호동 · 36㎡
+                  </p>
+                </div>
+                <div class="text-right shrink-0 whitespace-nowrap pl-2">
+                  <div class="text-xl font-bold text-[#2E2824]">월 19만원</div>
+                  <div class="text-sm text-[#7D7068]">보증금 3,200만원</div>
+                </div>
+                <div class="shrink-0">
+                  <button
+                    class="px-4 py-2.5 rounded-full bg-[#FFEFE8] hover:bg-[#FDE2D6] text-[#D8623A] font-semibold text-sm transition-colors flex items-center gap-1 cursor-pointer"
+                    onclick="openListingModal('오산 청호 행복주택 B단지')"
+                  >
+                    <span class="">공고문 보기</span
+                    ><span class="text-[15px] leading-none font-bold">↗</span>
+                  </button>
+                </div>
+              </article>
+
+              <!-- Listing Card 4 -->
+              <article
+                class="flex items-center justify-between gap-5 p-4 rounded-[20px] bg-white border border-[#F5E8DF] shadow-[0_6px_20px_rgba(160,100,70,0.05)] hover:shadow-[0_8px_26px_rgba(160,100,70,0.08)] hover:-translate-y-0.5 transition-all"
+              >
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-2 mb-1.5">
+                    <span
+                      class="inline-flex px-2 py-0.5 rounded-full text-xs font-semibold bg-surface-container-low text-primary whitespace-nowrap"
+                      >마감 D-21</span
+                    >
+                  </div>
+                  <h2
+                    class="text-[18px] font-bold text-[#2E2824] truncate whitespace-nowrap mb-1"
+                  >
+                    오산 가장 공공임대 청년
+                  </h2>
+                  <p
+                    class="text-sm text-[#7D7068] whitespace-nowrap overflow-hidden text-ellipsis"
+                  >
+                    가장동 · 29㎡
+                  </p>
+                </div>
+                <div class="text-right shrink-0 whitespace-nowrap pl-2">
+                  <div class="text-xl font-bold text-[#2E2824]">월 21만원</div>
+                  <div class="text-sm text-[#7D7068]">보증금 3,500만원</div>
+                </div>
+                <div class="shrink-0">
+                  <button
+                    class="px-4 py-2.5 rounded-full bg-[#FFEFE8] hover:bg-[#FDE2D6] text-[#D8623A] font-semibold text-sm transition-colors flex items-center gap-1 cursor-pointer"
+                    onclick="openListingModal('오산 가장 공공임대 청년')"
+                  >
+                    <span class="">공고문 보기</span
+                    ><span class="text-[15px] leading-none font-bold">↗</span>
+                  </button>
+                </div>
+              </article>
+            </div>
+            <div
+              class="flex items-center justify-end text-xs text-[#8A7F78] pt-1 px-1"
+            >
+              공고 출처: LH 청약플러스 · 2026.10.12 기준
+            </div>
+          </div>
+        </div>
+        <!-- Interactive Scripts for Sorting and Modal Previews -->
+        <script>
+          function toggleSortMenu() {
+            const menu = document.getElementById("sortMenu");
+            if (menu) menu.classList.toggle("hidden");
+          }
+
+          function setSort(label) {
+            const current = document.getElementById("currentSortLabel");
+            if (current) current.textContent = label;
+            const menu = document.getElementById("sortMenu");
+            if (menu) menu.classList.add("hidden");
+          }
+
+          function handleConditionChange() {
+            if (confirm("진단 조건 수정 페이지(Step 1)로 돌아가시겠습니까?")) {
+              window.location.reload();
+            }
+          }
+
+          function openListingModal(title) {
+            alert(
+              `[${title}]\n\n상세 공고문 및 청약 자격 세부 요건을 확인하는 팝업입니다.\n(공식 LH/GH 청약센터 연동 예시)`,
+            );
+          }
+
+          // Close sort dropdown when clicking outside
+          document.addEventListener("click", function (e) {
+            const sortBtn = document.getElementById("sortDropdownBtn");
+            const sortMenu = document.getElementById("sortMenu");
+            if (
+              sortBtn &&
+              sortMenu &&
+              !sortBtn.contains(e.target) &&
+              !sortMenu.contains(e.target)
+            ) {
+              sortMenu.classList.add("hidden");
+            }
+          });
+        </script>
+      </div>
+    </main>
+    <!-- Minimal Clean One-Line Footer -->
+    <footer
+      class="w-full shrink-0 bg-[#FFF9F5] border-t border-[#F2E5DC]/60 py-3"
+    >
+      <div
+        class="w-full px-12 md:px-16 flex items-center justify-between text-xs text-[#8A7F78]"
+      >
+        <div class="flex items-center gap-2 text-xs text-[#8A7F78]">
+          <span class="font-bold text-[#2B2420]">청년주거 핏</span
+          ><span class="">·</span
+          ><a class="hover:text-[#2B2420] transition-colors" href="#"
+            >이용약관</a
+          ><span class="">·</span
+          ><a class="hover:text-[#2B2420] transition-colors" href="#"
+            >개인정보처리방침</a
+          >
+        </div>
+      </div>
+    </footer>
+    <script>
+      function handleDiagnosisClick() {
+        const age = document.getElementById("userAge").value;
+        if (!age || age < 19 || age > 39) {
+          alert("만 19세 이상 39세 이하의 청년 연령을 입력해주세요.");
+          return;
+        }
+        const submitBtn = event.currentTarget;
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML =
+          '<span class="material-symbols-outlined animate-spin text-[18px]">progress_activity</span><span>판정 중...</span>';
+        submitBtn.disabled = true;
+        setTimeout(() => {
+          window.location.hash = "housing-recommendations";
+          submitBtn.innerHTML = originalText;
+          submitBtn.disabled = false;
+          alert("자격 판정이 완료되었습니다. [추천 목록] 탭으로 이동합니다.");
+        }, 500);
+      }
+    </script>
+  </body>
+</html>
