@@ -19,6 +19,10 @@ youth-housing-fit/
 └── .github/    # PR 템플릿 등 GitHub 설정
 ```
 
+## 실행 방법
+
+- 프론트엔드: `cd frontend && npm install && npm run dev` (자세한 내용은 [frontend/README.md](frontend/README.md))
+
 ## 팀원
 
 | 이름 | 역할 | GitHub |
