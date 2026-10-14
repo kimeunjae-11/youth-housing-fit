@@ -112,3 +112,16 @@ export function toPayload(values) {
     max_rent: isBlank(values.max_rent) ? null : Number(values.max_rent),
   }
 }
+
+// 요청 JSON → 폼 문자열 값 (toPayload 의 역변환). 조건 수정으로 돌아올 때 입력창을 채운다
+export function toFormValues(payload) {
+  return {
+    age: String(payload.age),
+    income: String(payload.income),
+    assets: String(payload.assets),
+    homeless_status: payload.homeless_status,
+    subscription_account: payload.subscription_account,
+    region: payload.region,
+    max_rent: payload.max_rent == null ? '' : String(payload.max_rent),
+  }
+}

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import NumberField from '../components/form/NumberField.jsx'
 import SegmentedField from '../components/form/SegmentedField.jsx'
 import SelectField from '../components/form/SelectField.jsx'
@@ -10,6 +10,7 @@ import {
   INITIAL_VALUES,
   REGION_OPTIONS,
   SUBSCRIPTION_OPTIONS,
+  toFormValues,
   toPayload,
   validateCondition,
 } from '../constants/condition.js'
@@ -86,7 +87,11 @@ function HousingTypeCard({ type }) {
 
 export default function ConditionPage() {
   const navigate = useNavigate()
-  const [values, setValues] = useState(INITIAL_VALUES)
+  const location = useLocation()
+  // 결과 화면의 '조건 수정하기'로 돌아오면 직전 입력값을 채워 둔다
+  const [values, setValues] = useState(() =>
+    location.state?.condition ? toFormValues(location.state.condition) : INITIAL_VALUES,
+  )
   const [errors, setErrors] = useState({})
 
   // 값이 바뀌면 그 필드의 에러만 걷어낸다
