@@ -5,6 +5,9 @@
 @layer base {
   body {
     @apply bg-canvas font-sans text-ink antialiased;
+    /* 한글은 단어 중간에서 끊기지 않게 하고, 긴 숫자·URL 은 넘치지 않게 끊는다 */
+    word-break: keep-all;
+    overflow-wrap: break-word;
   }
 }
 

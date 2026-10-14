@@ -12,7 +12,7 @@ export default function Layout() {
   return (
     <div className="flex min-h-screen flex-col bg-canvas">
       <header className="z-30 w-full shrink-0 border-b border-line/80 bg-canvas/90 backdrop-blur-sm">
-        <div className="flex h-16 w-full items-center justify-between px-12 md:px-16">
+        <div className="flex h-16 w-full items-center justify-between px-6 sm:px-8 lg:px-12 xl:px-16">
           <Link to="/" className="group flex items-center gap-2.5">
             <div className="flex h-9 w-9 items-center justify-center rounded-full bg-accent-soft text-accent transition-transform group-hover:scale-105">
               <span
@@ -46,7 +46,7 @@ export default function Layout() {
       </main>
 
       <footer className="w-full shrink-0 border-t border-line/60 bg-canvas py-3">
-        <div className="flex w-full items-center gap-2 px-12 text-xs text-subtle md:px-16">
+        <div className="flex w-full items-center gap-2 px-6 text-xs text-subtle sm:px-8 lg:px-12 xl:px-16">
           <span className="font-bold text-ink">청년주거 핏</span>
           <span>·</span>
           <span>이용약관</span>
