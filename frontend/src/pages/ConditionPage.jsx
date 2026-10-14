@@ -142,7 +142,7 @@ export default function ConditionPage() {
             >
               lock
             </span>
-            <span>입력값은 저장되지 않으며 판정에만 사용됩니다.</span>
+            <span>입력값은 서버에 저장되지 않고 판정에만 사용됩니다.</span>
           </div>
         </section>
 
@@ -230,6 +230,7 @@ export default function ConditionPage() {
               <NumberField
                 name="max_rent"
                 label="월 임대료 상한"
+                optional
                 unit="만원"
                 placeholder="예: 30"
                 value={values.max_rent}

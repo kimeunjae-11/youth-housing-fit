@@ -7,6 +7,7 @@ export default function NumberField({
   placeholder,
   hint,
   required = false,
+  optional = false,
   value,
   error,
   onChange,
@@ -18,6 +19,7 @@ export default function NumberField({
       <label htmlFor={name} className={labelClass}>
         {label}
         {required && <RequiredMark />}
+        {optional && <span className="text-xs font-normal text-subtle">(선택)</span>}
       </label>
       <div className="relative flex items-center">
         <input

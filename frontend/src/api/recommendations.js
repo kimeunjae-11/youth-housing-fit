@@ -17,6 +17,24 @@ const NOTICE_URL = "https://apply.lh.or.kr";
 const MOCK_EMPTY_MAX_RENT = 1;
 const MOCK_ERROR_MAX_RENT = 9999;
 
+// ─────────────────────────────────────────────────────────────
+// [임시] API 연동 시 제거
+// 희망 지역(region) 필터 목업. 응답 공고에는 지역 코드가 없어서, 주소 끝의 동 이름으로 가린다.
+// region 이 "all" 이면 전체, 아래 표에 없는 값이면 일치하는 공고가 없는 것으로 본다.
+// 세교1지구·세교2지구는 목업에서 구분하지 않고 둘 다 세교동 공고를 보여준다.
+// ─────────────────────────────────────────────────────────────
+const REGION_ALL = "all";
+const REGION_DONGS = {
+  segyo1: ["세교동"],
+  segyo2: ["세교동"],
+  wondong: ["원동"],
+  gajang: ["가장동"],
+};
+
+const inRegion = (listing, region) =>
+  region === REGION_ALL ||
+  (REGION_DONGS[region] ?? []).some((dong) => listing.address.endsWith(dong));
+
 const MOCK_LISTINGS = [
   {
     id: "osan-segyo-a",
@@ -78,7 +96,7 @@ const MOCK_LISTINGS = [
 
 /**
  * 맞춤 추천 공고 (목업)
- * 월 임대료 상한(max_rent)이 있으면 그보다 비싼 공고는 뺀다. 임대료를 알 수 없는(null) 공고는 남긴다.
+ * 희망 지역(region)에 속하지 않는 공고는 빼고, 월 임대료 상한(max_rent)이 있으면 그보다 비싼 공고도 뺀다. 임대료를 알 수 없는(null) 공고는 남긴다.
  * 단, 위 [임시] 트리거 값이 들어오면 빈 목록을 돌려주거나 ApiError 를 던진다.
  * @throws {ApiError}
  * @param {ReturnType<typeof import('../constants/condition.js').toPayload>} condition 폼 요청 변환 결과
@@ -105,9 +123,11 @@ export async function fetchRecommendations(condition) {
     return { dataDate: DATA_DATE, items: [] };
   }
 
+  // 지역 필터 + 임대료 상한 필터. 임대료를 모르는(null) 공고는 상한에 걸리지 않는다.
   const items = MOCK_LISTINGS.filter(
     (listing) =>
-      maxRent == null || listing.rent == null || listing.rent <= maxRent,
+      inRegion(listing, condition.region) &&
+      (maxRent == null || listing.rent == null || listing.rent <= maxRent),
   ).map((listing) => ({ ...listing }));
 
   return { dataDate: DATA_DATE, items };
