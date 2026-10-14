@@ -79,6 +79,8 @@ export default {
       boxShadow: {
         card: '0 10px 30px -5px rgba(217,107,72,0.06), 0 4px 12px -2px rgba(0,0,0,0.03)',
         step: '0 4px 16px rgba(217,107,72,0.06)',
+        listing: '0 6px 20px rgba(160,100,70,0.05)',
+        'listing-hover': '0 8px 26px rgba(160,100,70,0.08)',
       },
       fontFamily: {
         sans: [
