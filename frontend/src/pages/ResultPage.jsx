@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { checkEligibility } from '../api/eligibility.js'
+import StateMessage, { softButtonClass } from '../components/StateMessage.jsx'
 import StepTracker from '../components/StepTracker.jsx'
 import EligibilityTable from '../components/result/EligibilityTable.jsx'
 import { formatDate } from '../utils/format.js'
@@ -17,6 +18,9 @@ function getHeading({ status, data }) {
   }
   if (status === 'error') {
     return { title: '판정 결과를 불러오지 못했어요', subtitle: '조건은 그대로 두었으니 다시 시도해 보세요.' }
+  }
+  if (data.items.length === 0) {
+    return { title: '판정 결과가 비어 있어요', subtitle: '조건은 그대로 두었으니 다시 시도해 보세요.' }
   }
   const typeLabel = TYPE_LABELS[data.type] ?? data.type
   const failed = data.items.filter((item) => !item.passed).length
@@ -53,6 +57,8 @@ function ResultContent({ condition }) {
 
   const { status, data, message } = state
   const { title, subtitle } = getHeading({ status, data })
+  const isEmpty = status === 'success' && data.items.length === 0
+  const canProceed = status === 'success' && !isEmpty && data.eligible
   const failedItems = status === 'success' ? data.items.filter((item) => !item.passed) : []
 
   const retry = () => {
@@ -95,38 +101,25 @@ function ResultContent({ condition }) {
               <h2 className="text-[17px] font-bold text-ink">판정 근거</h2>
             </div>
 
-            {status === 'loading' && (
-              <div role="status" className="flex flex-col items-center gap-3 py-16 text-subtle">
-                <span
-                  className="material-symbols-outlined animate-spin text-[32px] text-accent"
-                  aria-hidden="true"
-                >
-                  progress_activity
-                </span>
-                <span className="text-[15px]">자격을 판정하고 있어요…</span>
-              </div>
-            )}
+            {status === 'loading' && <StateMessage variant="loading" message="자격을 판정하고 있어요…" />}
 
             {status === 'error' && (
-              <div role="alert" className="flex flex-col items-center gap-3 py-12 text-center">
-                <span
-                  className="material-symbols-outlined text-[32px] text-error"
-                  aria-hidden="true"
-                >
-                  error
-                </span>
-                <p className="max-w-sm text-[15px] font-medium text-ink">{message}</p>
-                <button
-                  type="button"
-                  onClick={retry}
-                  className="rounded-full bg-accent-soft px-6 py-2.5 text-sm font-semibold text-accent-ink transition-all hover:bg-primary-fixed active:scale-[0.98]"
-                >
+              <StateMessage variant="error" message={message}>
+                <button type="button" onClick={retry} className={softButtonClass}>
                   다시 시도
                 </button>
-              </div>
+              </StateMessage>
             )}
 
-            {status === 'success' && (
+            {isEmpty && (
+              <StateMessage variant="empty" message="판정할 항목을 받지 못했어요. 잠시 후 다시 시도해 주세요.">
+                <button type="button" onClick={retry} className={softButtonClass}>
+                  다시 시도
+                </button>
+              </StateMessage>
+            )}
+
+            {status === 'success' && !isEmpty && (
               <>
                 <EligibilityTable items={data.items} />
 
@@ -149,7 +142,7 @@ function ResultContent({ condition }) {
             )}
 
             <div className="flex flex-col gap-2 border-t border-line-soft pt-3">
-              {status === 'success' && !data.eligible && (
+              {status === 'success' && !isEmpty && !data.eligible && (
                 <p className="text-[13px] text-muted">
                   기준을 모두 충족해야 맞춤 주택을 볼 수 있어요. 조건을 수정해 다시 확인해 보세요.
                 </p>
@@ -158,14 +151,14 @@ function ResultContent({ condition }) {
                 <button
                   type="button"
                   onClick={goBackToCondition}
-                  className="rounded-full bg-accent-soft px-6 py-2.5 text-sm font-semibold text-accent-ink transition-all hover:bg-primary-fixed active:scale-[0.98]"
+                  className={softButtonClass}
                 >
                   조건 수정하기
                 </button>
                 <button
                   type="button"
                   onClick={goToRecommend}
-                  disabled={status !== 'success' || !data.eligible}
+                  disabled={!canProceed}
                   className="flex items-center gap-2 rounded-full bg-accent px-8 py-3 text-base font-bold text-accent-ink shadow-md shadow-accent/30 transition-all hover:bg-accent-hover active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none disabled:hover:bg-accent disabled:active:scale-100"
                 >
                   <span>맞춤 주택 보기</span>

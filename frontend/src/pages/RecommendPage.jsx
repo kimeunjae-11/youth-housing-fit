@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { fetchRecommendations } from '../api/recommendations.js'
+import StateMessage, { softButtonClass } from '../components/StateMessage.jsx'
 import StepTracker from '../components/StepTracker.jsx'
 import ListingCard from '../components/recommend/ListingCard.jsx'
 import { REGION_OPTIONS } from '../constants/condition.js'
@@ -40,47 +41,6 @@ function getHeading(status, count) {
 }
 
 const chipBase = 'rounded-full px-3 py-1 text-xs font-medium'
-
-function ListingSkeleton() {
-  return (
-    <div className="flex flex-col gap-2" role="status" aria-label="공고를 불러오는 중">
-      {[0, 1, 2].map((index) => (
-        <div
-          key={index}
-          className="flex animate-pulse items-center justify-between gap-5 rounded-[20px] border border-line-soft bg-white p-4"
-        >
-          <div className="flex-1 space-y-2">
-            <div className="h-4 w-16 rounded-full bg-surface-container" />
-            <div className="h-5 w-2/3 rounded bg-surface-container" />
-            <div className="h-4 w-1/3 rounded bg-surface-container" />
-          </div>
-          <div className="hidden space-y-2 sm:block">
-            <div className="h-6 w-24 rounded bg-surface-container" />
-            <div className="h-4 w-28 rounded bg-surface-container" />
-          </div>
-        </div>
-      ))}
-    </div>
-  )
-}
-
-function Notice({ icon, iconClass, message, role, children }) {
-  return (
-    <div
-      role={role}
-      className="flex flex-col items-center gap-3 rounded-[20px] border border-line-soft bg-white px-6 py-14 text-center shadow-listing"
-    >
-      <span className={`material-symbols-outlined text-[32px] ${iconClass}`} aria-hidden="true">
-        {icon}
-      </span>
-      <p className="max-w-sm text-[15px] font-medium text-ink">{message}</p>
-      <div className="flex flex-wrap justify-center gap-2">{children}</div>
-    </div>
-  )
-}
-
-const softButton =
-  'rounded-full bg-accent-soft px-6 py-2.5 text-sm font-semibold text-accent-ink transition-all hover:bg-primary-fixed active:scale-[0.98]'
 
 function RecommendContent({ condition }) {
   const navigate = useNavigate()
@@ -167,62 +127,64 @@ function RecommendContent({ condition }) {
                 </span>
                 조건 바꾸기
               </button>
-              <div className="relative">
-                <span
-                  className="material-symbols-outlined pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[16px] text-secondary"
-                  aria-hidden="true"
-                >
-                  sort
-                </span>
-                <select
-                  aria-label="정렬 기준"
-                  value={sortKey}
-                  onChange={(event) => setSortKey(event.target.value)}
-                  className="cursor-pointer appearance-none rounded-xl border border-surface-variant bg-white py-1.5 pl-9 pr-9 text-xs font-medium text-on-surface shadow-sm transition-all hover:bg-surface focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20"
-                >
-                  {SORT_OPTIONS.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-                <span
-                  className="material-symbols-outlined pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[16px] text-secondary"
-                  aria-hidden="true"
-                >
-                  expand_more
-                </span>
-              </div>
+              {status === 'success' && items.length > 0 && (
+                <div className="relative">
+                  <span
+                    className="material-symbols-outlined pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[16px] text-secondary"
+                    aria-hidden="true"
+                  >
+                    sort
+                  </span>
+                  <select
+                    aria-label="정렬 기준"
+                    value={sortKey}
+                    onChange={(event) => setSortKey(event.target.value)}
+                    className="cursor-pointer appearance-none rounded-xl border border-surface-variant bg-white py-1.5 pl-9 pr-9 text-xs font-medium text-on-surface shadow-sm transition-all hover:bg-surface focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20"
+                  >
+                    {SORT_OPTIONS.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                  <span
+                    className="material-symbols-outlined pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[16px] text-secondary"
+                    aria-hidden="true"
+                  >
+                    expand_more
+                  </span>
+                </div>
+              )}
             </div>
           </div>
 
-          {status === 'loading' && <ListingSkeleton />}
+          {status === 'loading' && <StateMessage variant="loading" bordered message="공고를 불러오고 있어요…" />}
 
           {status === 'error' && (
-            <Notice role="alert" icon="error" iconClass="text-error" message={message}>
-              <button type="button" onClick={retry} className={softButton}>
+            <StateMessage variant="error" bordered message={message}>
+              <button type="button" onClick={retry} className={softButtonClass}>
                 다시 시도
               </button>
-              <button type="button" onClick={goBackToCondition} className={softButton}>
-                조건 바꾸기
+              <button type="button" onClick={goBackToCondition} className={softButtonClass}>
+                조건 수정하기
               </button>
-            </Notice>
+            </StateMessage>
           )}
 
           {status === 'success' && items.length === 0 && (
-            <Notice
-              icon="search_off"
-              iconClass="text-subtle"
+            <StateMessage
+              variant="empty"
+              bordered
               message={
                 condition.max_rent != null
                   ? '조건에 맞는 공고가 없어요. 월 임대료 상한을 높이거나 다른 조건으로 다시 찾아보세요.'
                   : '조건에 맞는 공고가 없어요. 다른 조건으로 다시 찾아보세요.'
               }
             >
-              <button type="button" onClick={goBackToCondition} className={softButton}>
-                조건 바꾸기
+              <button type="button" onClick={goBackToCondition} className={softButtonClass}>
+                조건 수정하기
               </button>
-            </Notice>
+            </StateMessage>
           )}
 
           {status === 'success' && items.length > 0 && (
