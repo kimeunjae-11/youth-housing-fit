@@ -3,15 +3,13 @@ import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { checkEligibility } from '../api/eligibility.js'
 import StepTracker from '../components/StepTracker.jsx'
 import EligibilityTable from '../components/result/EligibilityTable.jsx'
+import { formatDate } from '../utils/format.js'
 
 const TYPE_LABELS = {
   'happy-youth': '행복주택 청년계층',
 }
 
 const FALLBACK_ERROR_MESSAGE = '자격 판정에 실패했어요. 잠시 후 다시 시도해 주세요.'
-
-// '2026-10-12' → '2026.10.12'
-const formatDate = (iso) => iso.replaceAll('-', '.')
 
 function getHeading({ status, data }) {
   if (status === 'loading') {
