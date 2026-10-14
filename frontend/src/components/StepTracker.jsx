@@ -34,7 +34,11 @@ export default function StepTracker({ current }) {
               </div>
               <span
                 className={
-                  active ? 'text-[15px] font-bold text-ink' : 'text-[14px] font-medium text-subtle'
+                  active
+                    ? 'text-[15px] font-bold text-ink'
+                    : done
+                      ? 'text-[14.5px] font-medium text-ink'
+                      : 'text-[14px] font-medium text-subtle'
                 }
               >
                 {label}
