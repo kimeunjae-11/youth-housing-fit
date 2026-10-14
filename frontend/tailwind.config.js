@@ -76,6 +76,10 @@ export default {
         background: '#fff8f5',
         'on-background': '#211a16',
       },
+      boxShadow: {
+        card: '0 10px 30px -5px rgba(217,107,72,0.06), 0 4px 12px -2px rgba(0,0,0,0.03)',
+        step: '0 4px 16px rgba(217,107,72,0.06)',
+      },
       fontFamily: {
         sans: [
           'Pretendard',
