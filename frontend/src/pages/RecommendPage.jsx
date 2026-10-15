@@ -9,7 +9,7 @@ import { formatDate } from '../utils/format.js'
 
 const FALLBACK_ERROR_MESSAGE = '추천 공고를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.'
 
-// rent 가 null(공고 예정)인 공고는 임대료 정렬에서 맨 뒤로 보낸다
+// 값이 null(미확인·공고 예정)인 공고는 정렬에서 맨 뒤로 보낸다
 const byNullsLast = (a, b, compare) => {
   if (a == null && b == null) return 0
   if (a == null) return 1
@@ -17,14 +17,27 @@ const byNullsLast = (a, b, compare) => {
   return compare(a, b)
 }
 
+const ascending = (x, y) => x - y
+
+// 임대료는 사용자에게 적용되는 확정 금액을 먼저, 확정 전 목록은 요약 참고 가격 순으로 뒤에 둔다
 const SORT_OPTIONS = [
-  { value: 'rent', label: '월 임대료 낮은 순', compare: (a, b) => byNullsLast(a.rent, b.rent, (x, y) => x - y) },
-  { value: 'deposit', label: '보증금 낮은 순', compare: (a, b) => a.deposit - b.deposit },
-  { value: 'area', label: '전용면적 넓은 순', compare: (a, b) => b.area - a.area },
-  { value: 'deadline', label: '마감 임박 순', compare: (a, b) => a.recruitEnd.localeCompare(b.recruitEnd) },
+  {
+    value: 'rent',
+    label: '월 임대료 낮은 순',
+    compare: (a, b) =>
+      byNullsLast(a.applicableRent, b.applicableRent, ascending) ||
+      byNullsLast(a.referenceRent, b.referenceRent, ascending),
+  },
+  { value: 'deposit', label: '보증금 낮은 순', compare: (a, b) => byNullsLast(a.deposit, b.deposit, ascending) },
+  { value: 'area', label: '전용면적 넓은 순', compare: (a, b) => byNullsLast(a.area, b.area, (x, y) => y - x) },
+  {
+    value: 'deadline',
+    label: '접수 마감일 순',
+    compare: (a, b) => byNullsLast(a.recruitEnd, b.recruitEnd, (x, y) => x.localeCompare(y)),
+  },
 ]
 
-function getHeading(status, count) {
+function getHeading(status, count, message) {
   if (status === 'loading') {
     return { title: '맞는 공고를 찾고 있어요', subtitle: '입력하신 조건으로 오산시 공고를 확인하는 중입니다.' }
   }
@@ -34,9 +47,10 @@ function getHeading(status, count) {
   if (count === 0) {
     return { title: '맞는 공고가 아직 없어요', subtitle: '조건을 조금 바꾸면 다른 공고가 보일 수 있어요.' }
   }
+  // 자격 판정과 별개인 지역·월세 탐색 결과다. '신청 가능'으로 보이는 문구는 쓰지 않는다.
   return {
-    title: '행복주택 청년계층, 신청 가능해요',
-    subtitle: '입력하신 조건을 모두 통과한 오산시 공고만 보여줍니다.',
+    title: '참고용 공고를 찾았어요',
+    subtitle: message || '지역·월세에 맞는 참고용 목록이에요. 자격 충족이나 현재 신청 가능을 뜻하지 않아요.',
   }
 }
 
@@ -72,7 +86,7 @@ function RecommendContent({ condition }) {
   }, [items, sortKey])
 
   const lowestRent = useMemo(() => {
-    const rents = (items ?? []).map((item) => item.rent).filter((rent) => rent != null)
+    const rents = (items ?? []).map((item) => item.applicableRent).filter((rent) => rent != null)
     return rents.length > 1 ? Math.min(...rents) : null
   }, [items])
 
@@ -82,7 +96,7 @@ function RecommendContent({ condition }) {
   }
   const goBackToCondition = () => navigate('/', { state: { condition } })
 
-  const { title, subtitle } = getHeading(status, items?.length)
+  const { title, subtitle } = getHeading(status, items?.length, data?.message)
   const regionLabel = REGION_OPTIONS.find((option) => option.value === condition.region)?.label
 
   return (
@@ -176,9 +190,11 @@ function RecommendContent({ condition }) {
               variant="empty"
               bordered
               message={
-                condition.max_rent != null
-                  ? '조건에 맞는 공고가 없어요. 월 임대료 상한을 높이거나 다른 조건으로 다시 찾아보세요.'
-                  : '조건에 맞는 공고가 없어요. 다른 조건으로 다시 찾아보세요.'
+                condition.region !== 'all'
+                  ? '선택한 지역에 맞는 공고가 없어요. 공고 데이터에 동 정보가 아직 없을 수 있으니 희망 지역을 "오산시 전체"로 바꿔 보세요.'
+                  : condition.max_rent != null
+                    ? '조건에 맞는 공고가 없어요. 월 임대료 상한을 높이거나 다른 조건으로 다시 찾아보세요.'
+                    : '조건에 맞는 공고가 없어요. 다른 조건으로 다시 찾아보세요.'
               }
             >
               <button type="button" onClick={goBackToCondition} className={softButtonClass}>
@@ -190,14 +206,14 @@ function RecommendContent({ condition }) {
           {status === 'success' && items.length > 0 && (
             <>
               <p className="sr-only" role="status">
-                맞춤 공고 {items.length}건
+                참고용 공고 {items.length}건
               </p>
               <div className="flex flex-col gap-2">
                 {sortedItems.map((listing) => (
                   <ListingCard
                     key={listing.id}
                     listing={listing}
-                    isLowestRent={lowestRent != null && listing.rent === lowestRent}
+                    isLowestRent={lowestRent != null && listing.applicableRent === lowestRent}
                   />
                 ))}
               </div>

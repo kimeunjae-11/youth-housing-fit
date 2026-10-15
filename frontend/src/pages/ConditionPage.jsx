@@ -8,6 +8,7 @@ import {
   FIELD_ORDER,
   HOMELESS_OPTIONS,
   INITIAL_VALUES,
+  MARITAL_OPTIONS,
   REGION_OPTIONS,
   SUBSCRIPTION_OPTIONS,
   toFormValues,
@@ -130,7 +131,7 @@ export default function ConditionPage() {
               <br />내 조건으로 확인하기
             </h1>
             <p className="max-w-md text-[15.5px] leading-relaxed text-subtle">
-              조건을 입력하면 신청 가능한 유형과 맞춤 주택 목록을 바로 보여줍니다.
+              조건을 입력하면 기본 자격 확인 결과와 참고용 주택 목록을 보여줍니다.
             </p>
           </div>
           <StepTracker current={1} />
@@ -198,6 +199,15 @@ export default function ConditionPage() {
                 required
                 value={values.assets}
                 error={errors.assets}
+                onChange={handleChange}
+              />
+              <SegmentedField
+                name="marital_status"
+                label="혼인 상태"
+                options={MARITAL_OPTIONS}
+                required
+                value={values.marital_status}
+                error={errors.marital_status}
                 onChange={handleChange}
               />
               <SegmentedField
