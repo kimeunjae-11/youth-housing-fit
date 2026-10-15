@@ -18,12 +18,14 @@ export const SUBSCRIPTION_OPTIONS = [
   { value: 'none', label: '미가입' },
 ]
 
+// 동 단위 지역은 공고 데이터에 동 정보(district)가 아직 없어 항상 0건이 나온다.
+// 데이터가 채워지기 전까지 선택하지 못하게 막아 둔다. (disabled: true 를 지우면 다시 열림)
 export const REGION_OPTIONS = [
   { value: 'all', label: '오산시 전체' },
-  { value: 'segyo1', label: '오산시 세교1지구' },
-  { value: 'segyo2', label: '오산시 세교2지구' },
-  { value: 'wondong', label: '오산시 원동 / 오산역 인근' },
-  { value: 'gajang', label: '오산시 가장동 / 갈곶동' },
+  { value: 'segyo1', label: '오산시 세교1지구 (준비 중)', disabled: true },
+  { value: 'segyo2', label: '오산시 세교2지구 (준비 중)', disabled: true },
+  { value: 'wondong', label: '오산시 원동 / 오산역 인근 (준비 중)', disabled: true },
+  { value: 'gajang', label: '오산시 가장동 / 갈곶동 (준비 중)', disabled: true },
 ]
 
 export const INITIAL_VALUES = {
@@ -33,6 +35,18 @@ export const INITIAL_VALUES = {
   marital_status: '',
   homeless_status: '',
   subscription_account: '',
+  region: 'all',
+  max_rent: '',
+}
+
+// '예시로 체험하기' 버튼이 채우는 값. 기본 조건을 충족하는 청년 1인 가구 예시
+export const EXAMPLE_VALUES = {
+  age: '26',
+  income: '250',
+  assets: '5000',
+  marital_status: 'single',
+  homeless_status: 'homeless',
+  subscription_account: 'active',
   region: 'all',
   max_rent: '',
 }

@@ -29,6 +29,31 @@ function messageForStatus(status, serverMessage, fallback) {
 }
 
 /**
+ * JSON GET. 실패하면 ApiError 를 던진다.
+ * @param {string} path 예: '/health'
+ * @param {string} unavailableMessage
+ * @returns {Promise<any>}
+ * @throws {ApiError}
+ */
+export async function getJson(path, unavailableMessage) {
+  if (!API_BASE_URL) {
+    throw new ApiError('API 서버 주소가 설정되지 않았어요. 관리자에게 문의해 주세요.', 'API_NOT_CONFIGURED')
+  }
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS)
+  try {
+    const response = await fetch(`${API_BASE_URL}${path}`, { signal: controller.signal })
+    if (!response.ok) throw new ApiError(unavailableMessage, `HTTP_${response.status}`)
+    return await response.json()
+  } catch (error) {
+    if (error instanceof ApiError) throw error
+    throw new ApiError(unavailableMessage, 'NETWORK')
+  } finally {
+    clearTimeout(timer)
+  }
+}
+
+/**
  * JSON POST. 성공하면 파싱한 본문을 돌려주고, 실패하면 ApiError 를 던진다.
  * @param {string} path 예: '/api/eligibility'
  * @param {object} body 요청 JSON
