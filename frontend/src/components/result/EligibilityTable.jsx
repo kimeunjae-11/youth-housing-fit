@@ -1,17 +1,31 @@
-function Verdict({ passed }) {
-  return passed ? (
-    <span className="inline-flex items-center gap-0.5 text-sm font-semibold text-ok">
-      <span className="material-symbols-outlined text-[16px]" aria-hidden="true">
-        check
+function Verdict({ verdict }) {
+  if (verdict === 'met') {
+    return (
+      <span className="inline-flex items-center gap-0.5 text-sm font-semibold text-ok">
+        <span className="material-symbols-outlined text-[16px]" aria-hidden="true">
+          check
+        </span>
+        충족
       </span>
-      충족
-    </span>
-  ) : (
-    <span className="inline-flex items-center gap-0.5 text-sm font-semibold text-error">
-      <span className="material-symbols-outlined text-[16px]" aria-hidden="true">
-        close
+    )
+  }
+  if (verdict === 'not_met') {
+    return (
+      <span className="inline-flex items-center gap-0.5 text-sm font-semibold text-error">
+        <span className="material-symbols-outlined text-[16px]" aria-hidden="true">
+          close
+        </span>
+        미충족
       </span>
-      미충족
+    )
+  }
+  // unknown: 입력이 없거나 심사 범위를 알 수 없어 충족 여부를 정하지 못한 항목. 충족으로 보여주지 않는다.
+  return (
+    <span className="inline-flex items-center gap-0.5 text-sm font-semibold text-subtle">
+      <span className="material-symbols-outlined text-[16px]" aria-hidden="true">
+        help
+      </span>
+      확인 필요
     </span>
   )
 }
@@ -52,7 +66,7 @@ export default function EligibilityTable({ items }) {
               role="cell"
               className="order-2 col-span-1 text-right md:order-4 md:col-span-2"
             >
-              <Verdict passed={item.passed} />
+              <Verdict verdict={item.verdict} />
             </span>
             <span
               role="cell"

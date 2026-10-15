@@ -1,107 +1,105 @@
-import { AGE_RANGE, HOMELESS_OPTIONS, SUBSCRIPTION_OPTIONS } from '../constants/condition.js'
-import { ApiError, delay } from './mockUtils.js'
+import { formatKrw } from '../utils/format.js'
+import { postJson } from './client.js'
+import { buildRequest } from './request.js'
 
-// ─────────────────────────────────────────────────────────────
-// [임시] 기준값 정리 후 교체
-// 아래 판정 기준값은 실제 공고·고시 값이 아니라 시안(02-result.png)에서 옮긴 임시 값이다.
-// ─────────────────────────────────────────────────────────────
 const HOUSING_TYPE = 'happy-youth' // 행복주택 청년계층
-const INCOME_LIMIT = 287 // 만원/월. [임시] 기준 중위소득 120% (1인 가구)
-const ASSET_LIMIT = 27300 // 만원. [임시] 총자산 2억 7,300만원
-const CRITERIA_SOURCE = '[임시] 행복주택 청년계층 입주자격 (기준값 정리 전)'
-const CRITERIA_DATE = '2026-10-12'
+const UNAVAILABLE_MESSAGE = '자격 판정 서버에 연결하지 못했어요. 잠시 후 다시 시도해 주세요.'
 
-// 목업 에러 확인용: 총자산을 이 값으로 입력하면 판정 요청이 실패한다. (실제 API 연동 시 삭제)
-export const MOCK_ERROR_ASSETS = 9999
+const MONEY_FIELDS = new Set(['monthly_income', 'total_assets', 'car_value'])
 
-const won = (value) => `${value.toLocaleString('ko-KR')}만원`
-const labelOf = (options, value) => options.find((option) => option.value === value)?.label ?? value
+// 백엔드 check 의 input_value 를 화면에 보여줄 문장으로 바꾼다
+function formatInput(check) {
+  const value = check.input_value
+  if (value === null || value === undefined) return '입력 안 함'
+  if (MONEY_FIELDS.has(check.field)) return formatKrw(value)
+  switch (check.field) {
+    case 'age':
+      return `${value}세`
+    case 'homeless':
+      return value ? '무주택' : '주택 보유'
+    case 'marital_status':
+      return value === 'single' ? '혼인 중 아님' : '혼인 중'
+    case 'housing_subscription':
+      return value ? '가입' : '미가입'
+    default:
+      return String(value)
+  }
+}
+
+// 백엔드 check 의 criterion 을 화면에 보여줄 문장으로 바꾼다
+function formatCriterion(check) {
+  const { criterion } = check
+  if (MONEY_FIELDS.has(check.field)) {
+    return criterion?.max == null ? '기준 확인 필요' : `${formatKrw(criterion.max)} 이하`
+  }
+  switch (check.field) {
+    case 'age':
+      return `만 ${criterion.min}세 ~ ${criterion.max}세`
+    case 'homeless':
+      return '본인 무주택'
+    case 'marital_status':
+      return '혼인 중이 아닐 것'
+    case 'housing_subscription':
+      return '입주 전까지 가입'
+    default:
+      return String(criterion)
+  }
+}
+
+// 추가 확인 항목의 field 이름을 화면 문구로. notice_rule 은 공고문 규칙 중 아직 구현하지 않은 예외다.
+function reviewLabel(field, items) {
+  if (field === 'notice_rule') return '공고문 예외 규칙'
+  return items.find((item) => item.key === field)?.label ?? field
+}
 
 /**
- * 자격 판정 (목업)
+ * 자격 판정
+ * 항목별 verdict 는 met(충족) / not_met(미충족) / unknown(확인 필요) 세 가지다.
+ * status 가 needs_review 이면 검사한 항목에 미충족은 없지만 추가 확인이 남았다는 뜻이라 '신청 가능'으로 보여주면 안 된다.
  * @param {ReturnType<typeof import('../constants/condition.js').toPayload>} condition 폼 요청 변환 결과
  * @returns {Promise<{
  *   type: string,
- *   eligible: boolean,
- *   items: { key: string, label: string, input: string, criterion: string, passed: boolean, reason: string }[],
+ *   status: 'met' | 'not_met' | 'needs_review',
+ *   basicStatus: string,
+ *   basicMessage: string,
+ *   assessedCount: number,
+ *   unknownCount: number,
+ *   items: { key: string, label: string, input: string, criterion: string, verdict: 'met' | 'not_met' | 'unknown', reason: string }[],
+ *   additionalReview: { label: string, reason: string }[],
  *   criteriaSource: string,
  *   criteriaDate: string,
+ *   sourceUrl: string | null,
+ *   sourceNote: string | null,
  * }>}
  * @throws {ApiError}
  */
 export async function checkEligibility(condition) {
-  await delay()
+  const data = await postJson('/api/eligibility', buildRequest(condition), UNAVAILABLE_MESSAGE)
 
-  if (condition.assets === MOCK_ERROR_ASSETS) {
-    throw new ApiError('자격 판정 서버에 연결하지 못했어요. 잠시 후 다시 시도해 주세요.', 'ELIGIBILITY_UNAVAILABLE')
-  }
-
-  const items = [
-    {
-      key: 'age',
-      label: '만 나이',
-      input: `${condition.age}세`,
-      criterion: `만 ${AGE_RANGE.min}세 ~ ${AGE_RANGE.max}세 이하`,
-      passed: condition.age >= AGE_RANGE.min && condition.age <= AGE_RANGE.max,
-      reason: '청년 연령 범위 안에 있어요.',
-    },
-    {
-      key: 'income',
-      label: '월 평균 소득',
-      input: won(condition.income),
-      criterion: `기준 중위소득 120% 이하 (${won(INCOME_LIMIT)})`,
-      passed: condition.income <= INCOME_LIMIT,
-      reason: '소득 기준 이내예요.',
-    },
-    {
-      key: 'assets',
-      label: '총 자산',
-      input: won(condition.assets),
-      criterion: `총자산 ${won(ASSET_LIMIT)} 이하`,
-      passed: condition.assets <= ASSET_LIMIT,
-      reason: '자산 기준 이내예요.',
-    },
-    {
-      key: 'homeless',
-      label: '무주택 여부',
-      input: labelOf(HOMELESS_OPTIONS, condition.homeless_status),
-      criterion: '본인 무주택 요건 충족',
-      passed: condition.homeless_status === 'homeless',
-      reason: '무주택 요건을 충족해요.',
-    },
-    {
-      key: 'subscription',
-      label: '청약통장',
-      input: labelOf(SUBSCRIPTION_OPTIONS, condition.subscription_account),
-      criterion: '입주 전까지 가입 유지',
-      passed: condition.subscription_account === 'active',
-      reason: '청약통장 가입 요건을 충족해요.',
-    },
-  ].map((item) => (item.passed ? item : { ...item, reason: failReason(item) }))
+  const items = (data.checks ?? []).map((check) => ({
+    key: check.field,
+    label: check.label,
+    input: formatInput(check),
+    criterion: formatCriterion(check),
+    verdict: check.status,
+    reason: check.reason,
+  }))
 
   return {
     type: HOUSING_TYPE,
-    eligible: items.every((item) => item.passed),
+    status: data.status,
+    basicStatus: data.basic_status,
+    basicMessage: data.basic_message,
+    assessedCount: data.assessed_count,
+    unknownCount: data.unknown_count,
     items,
-    criteriaSource: CRITERIA_SOURCE,
-    criteriaDate: CRITERIA_DATE,
-  }
-}
-
-// 불충족 사유 문구. 충족일 때의 reason 은 위 items 정의에 둔다.
-function failReason(item) {
-  switch (item.key) {
-    case 'age':
-      return '청년 연령 범위를 벗어났어요.'
-    case 'income':
-      return '소득 기준을 초과했어요.'
-    case 'assets':
-      return '자산 기준을 초과했어요.'
-    case 'homeless':
-      return '주택 보유 세대는 신청할 수 없어요.'
-    case 'subscription':
-      return '청약통장 가입이 필요해요.'
-    default:
-      return '기준을 충족하지 못했어요.'
+    additionalReview: (data.additional_review ?? []).map((review) => ({
+      label: reviewLabel(review.field, items),
+      reason: review.reason,
+    })),
+    criteriaSource: data.scope,
+    criteriaDate: data.basis_date,
+    sourceUrl: data.source_url ?? null,
+    sourceNote: data.source_note ?? null,
   }
 }

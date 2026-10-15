@@ -1,12 +1,16 @@
 // 조건 입력 폼의 필드 정의.
-// 필드 이름은 요청 JSON 키로 그대로 쓰인다. (docs/api.md 가 아직 없어 시안 HTML 의 name 속성을 따랐다.
-// api.md 가 확정되면 이 파일의 이름·값만 맞추면 된다.)
+// 이 파일의 필드 이름·단위(만원)는 화면용이다. 백엔드 요청 JSON(원 단위·boolean)으로의 변환은 src/api/request.js 에서 한다.
 
 export const AGE_RANGE = { min: 19, max: 39 }
 
 export const HOMELESS_OPTIONS = [
   { value: 'homeless', label: '무주택 (세대원 전원)' },
   { value: 'homeowner', label: '주택 보유' },
+]
+
+export const MARITAL_OPTIONS = [
+  { value: 'single', label: '혼인 중 아님' },
+  { value: 'married', label: '혼인 중' },
 ]
 
 export const SUBSCRIPTION_OPTIONS = [
@@ -26,6 +30,7 @@ export const INITIAL_VALUES = {
   age: '',
   income: '',
   assets: '',
+  marital_status: '',
   homeless_status: '',
   subscription_account: '',
   region: 'all',
@@ -37,6 +42,7 @@ export const FIELD_ORDER = [
   'age',
   'income',
   'assets',
+  'marital_status',
   'homeless_status',
   'subscription_account',
   'region',
@@ -79,6 +85,10 @@ export function validateCondition(values) {
     if (message) errors.assets = message
   }
 
+  if (!values.marital_status) {
+    errors.marital_status = '혼인 상태를 선택해 주세요.'
+  }
+
   if (!values.homeless_status) {
     errors.homeless_status = '무주택 여부를 선택해 주세요.'
   }
@@ -106,6 +116,7 @@ export function toPayload(values) {
     age: Number(values.age),
     income: Number(values.income),
     assets: Number(values.assets),
+    marital_status: values.marital_status,
     homeless_status: values.homeless_status,
     subscription_account: values.subscription_account,
     region: values.region,
@@ -119,6 +130,7 @@ export function toFormValues(payload) {
     age: String(payload.age),
     income: String(payload.income),
     assets: String(payload.assets),
+    marital_status: payload.marital_status ?? '',
     homeless_status: payload.homeless_status,
     subscription_account: payload.subscription_account,
     region: payload.region,
