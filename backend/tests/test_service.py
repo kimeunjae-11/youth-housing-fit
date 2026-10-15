@@ -1,6 +1,7 @@
 import copy,io,json,unittest
 from datetime import date
 from service import judge,recommend,read,validate
+import app as app_module
 from app import application
 
 class ServiceTests(unittest.TestCase):
@@ -113,5 +114,23 @@ class ServiceTests(unittest.TestCase):
             json.loads(b''.join(response))
             self.assertTrue(captured[0].startswith(code))
             self.assertEqual(captured[1]['Access-Control-Allow-Origin'],'https://youth-housing-fit.vercel.app')
+
+class UnexpectedErrorTests(unittest.TestCase):
+    def test_unexpected_error_returns_json_500_with_cors(self):
+        def boom(_profile): raise RuntimeError('boom')
+        original=app_module.application.__globals__['judge']
+        app_module.application.__globals__['judge']=boom
+        try:
+            body=json.dumps({'age':26}).encode()
+            env={'REQUEST_METHOD':'POST','PATH_INFO':'/api/eligibility','CONTENT_TYPE':'application/json',
+                 'CONTENT_LENGTH':str(len(body)),'wsgi.input':io.BytesIO(body),'HTTP_ORIGIN':'http://localhost:5173'}
+            seen={}
+            def start(status,headers): seen['status']=status; seen['headers']=dict(headers)
+            out=json.loads(b''.join(application(env,start)))
+        finally:
+            app_module.application.__globals__['judge']=original
+        self.assertTrue(seen['status'].startswith('500'))
+        self.assertEqual(seen['headers'].get('Access-Control-Allow-Origin'),'http://localhost:5173')
+        self.assertNotIn('boom',out['error'])
 
 if __name__=='__main__': unittest.main()

@@ -28,6 +28,10 @@ def application(env,start_response):
     except (ValueError,UnicodeDecodeError) as exc:
         # Never echo arbitrary request contents into logs or responses.
         return respond('422 Unprocessable Entity',dict(error=str(exc) if isinstance(exc,ValueError) and str(exc).startswith('필수 항목을 입력하세요:') else '입력 형식·숫자 범위·허용 항목을 API 문서에서 확인하세요'))
+    except Exception:
+        # 예상하지 못한 서버 오류도 CORS 헤더가 붙은 JSON 으로 응답한다.
+        # (헤더 없이 500 이 나가면 브라우저에는 CORS 오류로만 보여 원인을 찾기 어렵다)
+        return respond('500 Internal Server Error',dict(error='서버 내부 오류입니다. 잠시 후 다시 시도하세요'))
 class QuietHandler(WSGIRequestHandler):
     def log_message(self,*args): pass
 if __name__=='__main__':
