@@ -1,0 +1,19 @@
+{
+  "id": "gh-osangajang-youth-20260423",
+  "housing_type": "행복주택",
+  "target": "청년 일반공급",
+  "notice_date": "2026-04-23",
+  "source_url": "https://apply.gh.or.kr/sb/sr/sr7150/selectPbancDetailView.do?pbancNo=788",
+  "source_note": "사용자 제공 엑셀 6_청년_판정기준: GH 공고 20쪽 정리. 원문을 이번 작업에서 재검증한 것은 아님",
+  "source_sheet": "6_청년_판정기준",
+  "applies_to_names": ["오산가장 경기행복주택"],
+  "rules_complete": false,
+  "age_min": 19,
+  "age_max": 39,
+  "income_limits": [4576036,6452897,8168429,8802202,9326985,9906263],
+  "income_extra_person": 579278,
+  "asset_limits": [251000000,276000000,301000000],
+  "car_limits": [45420000,49960000,54510000],
+  "subscription_deadline": "before_move_in",
+  "unimplemented": ["사회초년생 예외", "자녀 소득 가산", "소득·자산 심사 대상 범위의 상세 검증", "우선순위 및 증빙 확인"]
+}
