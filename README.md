@@ -21,7 +21,20 @@ youth-housing-fit/
 
 ## 실행 방법
 
-- 프론트엔드: `cd frontend && npm install && npm run dev` (자세한 내용은 [frontend/README.md](frontend/README.md))
+### 프론트엔드 (`frontend/`)
+
+Node.js 20.19 이상(또는 22.12 이상)이 필요합니다. 아래 명령은 모두 `frontend/` 폴더 안에서 실행합니다.
+
+```bash
+cd frontend
+npm install        # 최초 1회: 의존성 설치
+npm run dev        # 개발 서버 실행 → http://localhost:5173
+npm run build      # 프로덕션 빌드 (dist/)
+npm run preview    # 빌드 결과 미리보기
+npm run lint       # 코드 검사
+```
+
+백엔드 API가 아직 연동되지 않아 판정·추천 결과는 목업 데이터입니다. 자세한 내용은 [frontend/README.md](frontend/README.md)를 참고하세요.
 
 ## 팀원
 
