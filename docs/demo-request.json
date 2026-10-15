@@ -1,0 +1,14 @@
+{
+  "age": 26,
+  "monthly_income": 2500000,
+  "total_assets": 50000000,
+  "car_value": 0,
+  "household_size": 1,
+  "children_after_20230328": 0,
+  "income_scope": "self",
+  "marital_status": "single",
+  "homeless": true,
+  "housing_subscription": false,
+  "region": "오산시 전체",
+  "max_monthly_rent": 80000
+}
