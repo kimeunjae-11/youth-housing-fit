@@ -16,7 +16,7 @@ function recruitPeriod(recruitStart, recruitEnd) {
   return `접수 ${formatDate(recruitStart)} ~ ${formatDate(recruitEnd)}`
 }
 
-export default function ListingCard({ listing, isLowestRent }) {
+export default function ListingCard({ listing, isLowestRent, budgetWon = null }) {
   const {
     name,
     address,
@@ -39,6 +39,15 @@ export default function ListingCard({ listing, isLowestRent }) {
   if (applicableRent != null) rentText = `월 ${formatKrw(applicableRent)}`
   else if (referenceRent != null) rentText = `참고 월 ${formatKrw(referenceRent)}`
 
+  // 적용 임대료가 확인되지 않은 공고는 서버가 상한으로 거르지 않는다. 대신 참고가와 상한을 비교해 알려준다.
+  let budgetNote = null
+  if (budgetWon != null && applicableRent == null && referenceRent != null) {
+    budgetNote =
+      referenceRent > budgetWon
+        ? `입력한 월 임대료 상한(${formatKrw(budgetWon)})보다 참고가가 높아요. 실제 적용 임대료는 공고문에서 확인하세요.`
+        : '참고가는 입력한 상한 이내예요. 실제 적용 임대료는 공고문에서 확인하세요.'
+  }
+
   return (
     <article className="flex flex-col gap-3 rounded-[20px] border border-line-soft bg-white p-4 shadow-listing transition-all hover:-translate-y-0.5 hover:shadow-listing-hover sm:flex-row sm:items-center sm:gap-5">
       <div className="min-w-0 flex-1">
@@ -52,6 +61,15 @@ export default function ListingCard({ listing, isLowestRent }) {
           {area != null && ` · ${area}㎡`}
         </p>
         <p className="text-sm text-subtle">{recruitPeriod(recruitStart, recruitEnd)}</p>
+        {budgetNote && (
+          <p
+            className={`mt-1.5 text-xs font-semibold ${
+              referenceRent > budgetWon ? 'text-error' : 'text-subtle'
+            }`}
+          >
+            {budgetNote}
+          </p>
+        )}
         {cautions.length > 0 && (
           <ul className="mt-1.5 list-disc space-y-0.5 pl-4 text-xs text-subtle">
             {cautions.map((caution) => (

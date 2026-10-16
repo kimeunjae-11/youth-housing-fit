@@ -4,8 +4,10 @@
 
 ## 프로젝트 소개
 
-**youth-housing-fit**은 청년이 자신의 조건(소득, 나이, 거주지, 가구 형태 등)에 맞는 주거 지원 정책과 주택을 쉽게 찾을 수 있도록 돕는 서비스입니다.
-흩어져 있는 청년 주거 정책·공공임대 정보를 모아, 사용자에게 적합한 선택지를 추천하는 것을 목표로 합니다.
+**청년주거 핏**은 청년이 공공임대주택 모집공고의 신청 자격을 쉽게 확인하도록 돕는 서비스입니다.
+조건을 입력하면 공고 기준과 항목별로 비교해 충족·미충족·추가 확인 필요를 판정 근거와 함께 보여주고, 지역·월세에 맞는 참고용 주택 목록을 제공합니다.
+
+현재 MVP는 **오산시 행복주택**(LH 5건 + GH 1건 공고, GH 오산가장 청년 기준)을 대상으로 합니다. 판정 결과는 참고용이며 최종 자격은 공고문과 공급기관 심사로 결정됩니다.
 
 ## 폴더 구조
 
@@ -19,22 +21,29 @@ youth-housing-fit/
 └── .github/    # PR 템플릿 등 GitHub 설정
 ```
 
-## 실행 방법
+## 실행 방법 (로컬)
 
-### 프론트엔드 (`frontend/`)
+터미널 두 개를 엽니다. 시연 순서와 자주 나는 오류는 [docs/demo-guide.md](docs/demo-guide.md)를 참고하세요.
 
-Node.js 20.19 이상(또는 22.12 이상)이 필요합니다. 아래 명령은 모두 `frontend/` 폴더 안에서 실행합니다.
+### 1. 백엔드 (`backend/`, Python 3.11 이상)
+
+```bash
+cd backend
+py -m pip install tzdata   # Windows 최초 1회 (macOS·Linux는 생략 가능)
+py app.py                  # Windows. macOS·Linux는 python3 app.py
+```
+
+`http://127.0.0.1:8000/health`에서 `{"status": "ok", ...}`가 보이면 정상입니다. API 형식은 [docs/backend-api.md](docs/backend-api.md), 테스트는 [backend/README.md](backend/README.md)를 참고하세요.
+
+### 2. 프론트엔드 (`frontend/`, Node.js 20.19 이상 또는 22.12 이상)
 
 ```bash
 cd frontend
-npm install        # 최초 1회: 의존성 설치
-npm run dev        # 개발 서버 실행 → http://localhost:5173
-npm run build      # 프로덕션 빌드 (dist/)
-npm run preview    # 빌드 결과 미리보기
-npm run lint       # 코드 검사
+npm install        # 최초 1회
+npm run dev        # http://localhost:5173
 ```
 
-백엔드 API가 아직 연동되지 않아 판정·추천 결과는 목업 데이터입니다. 자세한 내용은 [frontend/README.md](frontend/README.md)를 참고하세요.
+개발 서버는 `http://127.0.0.1:8000` 백엔드에 자동으로 연결됩니다. 다른 주소를 쓰려면 `frontend/.env.example`을 참고하세요. 자세한 내용은 [frontend/README.md](frontend/README.md)에 있습니다.
 
 ## 팀원
 

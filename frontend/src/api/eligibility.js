@@ -18,7 +18,7 @@ function formatInput(check) {
     case 'homeless':
       return value ? '무주택' : '주택 보유'
     case 'marital_status':
-      return value === 'single' ? '혼인 중 아님' : '혼인 중'
+      return value === 'single' ? '미혼' : '기혼'
     case 'housing_subscription':
       return value ? '가입' : '미가입'
     default:

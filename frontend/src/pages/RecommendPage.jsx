@@ -85,6 +85,12 @@ function RecommendContent({ condition }) {
     return [...items].sort(compare)
   }, [items, sortKey])
 
+  // 모든 공고에 똑같이 붙는 안내 문장은 목록 위에 한 번만 보여주고 카드에서는 뺀다
+  const commonCautions = useMemo(() => {
+    if (!items || items.length < 2) return []
+    return items[0].cautions.filter((caution) => items.every((item) => item.cautions.includes(caution)))
+  }, [items])
+
   const lowestRent = useMemo(() => {
     const rents = (items ?? []).map((item) => item.applicableRent).filter((rent) => rent != null)
     return rents.length > 1 ? Math.min(...rents) : null
@@ -208,12 +214,20 @@ function RecommendContent({ condition }) {
               <p className="sr-only" role="status">
                 참고용 공고 {items.length}건
               </p>
+              {commonCautions.length > 0 && (
+                <ul className="list-disc space-y-0.5 rounded-xl bg-surface-container-low px-4 py-2.5 pl-8 text-xs text-muted">
+                  {commonCautions.map((caution) => (
+                    <li key={caution}>{caution}</li>
+                  ))}
+                </ul>
+              )}
               <div className="flex flex-col gap-2">
                 {sortedItems.map((listing) => (
                   <ListingCard
                     key={listing.id}
-                    listing={listing}
+                    listing={{ ...listing, cautions: listing.cautions.filter((caution) => !commonCautions.includes(caution)) }}
                     isLowestRent={lowestRent != null && listing.applicableRent === lowestRent}
+                    budgetWon={condition.max_rent != null ? condition.max_rent * 10000 : null}
                   />
                 ))}
               </div>

@@ -9,8 +9,8 @@ export const HOMELESS_OPTIONS = [
 ]
 
 export const MARITAL_OPTIONS = [
-  { value: 'single', label: '혼인 중 아님' },
-  { value: 'married', label: '혼인 중' },
+  { value: 'single', label: '미혼' },
+  { value: 'married', label: '기혼' },
 ]
 
 export const SUBSCRIPTION_OPTIONS = [
@@ -18,21 +18,37 @@ export const SUBSCRIPTION_OPTIONS = [
   { value: 'none', label: '미가입' },
 ]
 
+// 동 단위 지역은 공고 데이터에 동 정보(district)가 아직 없어 항상 0건이 나온다.
+// 데이터가 채워지기 전까지 선택하지 못하게 막아 둔다. (disabled: true 를 지우면 다시 열림)
 export const REGION_OPTIONS = [
   { value: 'all', label: '오산시 전체' },
-  { value: 'segyo1', label: '오산시 세교1지구' },
-  { value: 'segyo2', label: '오산시 세교2지구' },
-  { value: 'wondong', label: '오산시 원동 / 오산역 인근' },
-  { value: 'gajang', label: '오산시 가장동 / 갈곶동' },
+  { value: 'segyo1', label: '오산시 세교1지구 (준비 중)', disabled: true },
+  { value: 'segyo2', label: '오산시 세교2지구 (준비 중)', disabled: true },
+  { value: 'wondong', label: '오산시 원동 / 오산역 인근 (준비 중)', disabled: true },
+  { value: 'gajang', label: '오산시 가장동 / 갈곶동 (준비 중)', disabled: true },
 ]
 
 export const INITIAL_VALUES = {
   age: '',
   income: '',
   assets: '',
+  car_value: '',
   marital_status: '',
   homeless_status: '',
   subscription_account: '',
+  region: 'all',
+  max_rent: '',
+}
+
+// '예시로 체험하기' 버튼이 채우는 값. 기본 조건을 충족하는 청년 1인 가구 예시
+export const EXAMPLE_VALUES = {
+  age: '26',
+  income: '250',
+  assets: '5000',
+  car_value: '',
+  marital_status: 'single',
+  homeless_status: 'homeless',
+  subscription_account: 'active',
   region: 'all',
   max_rent: '',
 }
@@ -42,6 +58,7 @@ export const FIELD_ORDER = [
   'age',
   'income',
   'assets',
+  'car_value',
   'marital_status',
   'homeless_status',
   'subscription_account',
@@ -85,6 +102,12 @@ export function validateCondition(values) {
     if (message) errors.assets = message
   }
 
+  // 자동차 가액은 선택 입력: 비워 두면 '추가 확인 필요'로 남는다. 차량이 없으면 0 을 입력한다.
+  if (!isBlank(values.car_value)) {
+    const message = checkNonNegativeInteger(values.car_value, '자동차 가액')
+    if (message) errors.car_value = message
+  }
+
   if (!values.marital_status) {
     errors.marital_status = '혼인 상태를 선택해 주세요.'
   }
@@ -116,6 +139,7 @@ export function toPayload(values) {
     age: Number(values.age),
     income: Number(values.income),
     assets: Number(values.assets),
+    car_value: isBlank(values.car_value) ? null : Number(values.car_value),
     marital_status: values.marital_status,
     homeless_status: values.homeless_status,
     subscription_account: values.subscription_account,
@@ -130,6 +154,7 @@ export function toFormValues(payload) {
     age: String(payload.age),
     income: String(payload.income),
     assets: String(payload.assets),
+    car_value: payload.car_value == null ? '' : String(payload.car_value),
     marital_status: payload.marital_status ?? '',
     homeless_status: payload.homeless_status,
     subscription_account: payload.subscription_account,

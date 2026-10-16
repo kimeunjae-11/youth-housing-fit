@@ -1,10 +1,13 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { checkHealth } from '../api/health.js'
 import { useLocation, useNavigate } from 'react-router-dom'
 import NumberField from '../components/form/NumberField.jsx'
 import SegmentedField from '../components/form/SegmentedField.jsx'
 import SelectField from '../components/form/SelectField.jsx'
 import StepTracker from '../components/StepTracker.jsx'
+import { formatDate } from '../utils/format.js'
 import {
+  EXAMPLE_VALUES,
   FIELD_ORDER,
   HOMELESS_OPTIONS,
   INITIAL_VALUES,
@@ -94,6 +97,23 @@ export default function ConditionPage() {
     location.state?.condition ? toFormValues(location.state.condition) : INITIAL_VALUES,
   )
   const [errors, setErrors] = useState({})
+  // 백엔드 상태: 데이터 기준일 표시용. 서버가 꺼져 있으면 진단 전에 미리 알린다
+  const [health, setHealth] = useState({ status: 'loading' })
+
+  useEffect(() => {
+    let cancelled = false
+    checkHealth()
+      .then((data) => !cancelled && setHealth({ status: 'ok', dataAsOf: data.dataAsOf }))
+      .catch(() => !cancelled && setHealth({ status: 'down' }))
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  const fillExample = () => {
+    setValues(EXAMPLE_VALUES)
+    setErrors({})
+  }
 
   // 값이 바뀌면 그 필드의 에러만 걷어낸다
   const handleChange = (name, value) => {
@@ -145,6 +165,16 @@ export default function ConditionPage() {
             </span>
             <span>입력값은 서버에 저장되지 않고 판정에만 사용됩니다.</span>
           </div>
+          {health.status === 'ok' && (
+            <p className="px-1 text-[13px] text-subtle">
+              LH·GH 행복주택 공고 기준 · 데이터 기준일 {formatDate(health.dataAsOf)}
+            </p>
+          )}
+          {health.status === 'down' && (
+            <p role="alert" className="rounded-2xl bg-error-container px-3.5 py-2.5 text-[13px] font-medium text-on-error-container">
+              판정 서버에 연결하지 못했어요. 백엔드 서버가 켜져 있는지 확인해 주세요.
+            </p>
+          )}
         </section>
 
         <section className="lg:col-span-7">
@@ -154,9 +184,18 @@ export default function ConditionPage() {
             className="rounded-[20px] border border-line-soft bg-white p-7 shadow-card"
           >
             <div className="mb-4 border-b border-line-soft pb-3.5">
-              <div className="flex items-center gap-2">
-                <span className="h-2.5 w-2.5 rounded-full bg-accent" aria-hidden="true" />
-                <h2 className="text-[18px] font-bold text-ink">기본 조건 입력</h2>
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <span className="h-2.5 w-2.5 rounded-full bg-accent" aria-hidden="true" />
+                  <h2 className="text-[18px] font-bold text-ink">기본 조건 입력</h2>
+                </div>
+                <button
+                  type="button"
+                  onClick={fillExample}
+                  className="rounded-full border border-line-strong bg-white px-3.5 py-1.5 text-[13px] font-semibold text-ink transition-colors hover:bg-accent-soft"
+                >
+                  예시로 체험하기
+                </button>
               </div>
               <p className="mt-0.5 pl-[18px] text-[13px] text-subtle">
                 정확한 판정을 위해 현재 기준의 정보를 간단히 선택해 주세요.
@@ -201,6 +240,17 @@ export default function ConditionPage() {
                 error={errors.assets}
                 onChange={handleChange}
               />
+              <NumberField
+                name="car_value"
+                label="자동차 가액"
+                optional
+                unit="만원"
+                placeholder="예: 0"
+                hint="차량이 없으면 0을 입력해 주세요."
+                value={values.car_value}
+                error={errors.car_value}
+                onChange={handleChange}
+              />
               <SegmentedField
                 name="marital_status"
                 label="혼인 상태"
@@ -243,6 +293,7 @@ export default function ConditionPage() {
                 optional
                 unit="만원"
                 placeholder="예: 30"
+                hint="참고용 주택 목록에만 적용돼요. 자격 판정에는 쓰이지 않아요."
                 value={values.max_rent}
                 error={errors.max_rent}
                 onChange={handleChange}
