@@ -1,6 +1,6 @@
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 
-// 시안: 자격 진단 탭은 조건 입력(/)·판정 결과(/result)에서 활성, 맞춤 추천(/recommend)에서는 비활성
+// 시안: 자격 진단 탭은 조건 입력(/)·판정 결과(/result)에서 활성, 참고 주택(/recommend)에서는 비활성
 const DIAGNOSIS_PATHS = ['/', '/result']
 
 const tabBase = 'rounded-full px-4 py-1.5 text-sm transition-all'

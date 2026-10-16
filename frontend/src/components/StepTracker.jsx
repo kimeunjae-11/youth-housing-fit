@@ -1,4 +1,4 @@
-const STEPS = ['조건 입력', '자격 판정', '맞춤 추천']
+const STEPS = ['조건 입력', '자격 판정', '참고 주택']
 
 // current: 1~3. 이전 단계는 완료 표시, 이후 단계는 흐리게
 export default function StepTracker({ current }) {
