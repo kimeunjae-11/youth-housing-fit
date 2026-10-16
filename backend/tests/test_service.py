@@ -89,7 +89,9 @@ class ServiceTests(unittest.TestCase):
     def test_price_scope_and_verified_budget(self):
         base=dict(id='test',district='금암동',monthly_rent=100000,rent_verified=True,rent_income_group='no_income')
         catalog=dict(data_as_of='2026-10-15',listings=[base])
-        result=recommend(self.p|dict(max_monthly_rent=1),catalog)
+        # 적용 임대료 미확인이어도 요약 참고가가 상한을 넘으면 제외, 상한 이내면 '예산 충족 미확인'으로 유지
+        self.assertEqual(recommend(self.p|dict(max_monthly_rent=1),catalog)['total'],0)
+        result=recommend(self.p|dict(max_monthly_rent=100000),catalog)
         self.assertEqual(result['total'],1)
         self.assertEqual(result['results'][0]['budget_status'],'unknown')
         self.assertEqual(recommend(self.p|dict(monthly_income=0,max_monthly_rent=99999),catalog)['total'],0)

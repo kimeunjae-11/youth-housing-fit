@@ -102,6 +102,8 @@ def recommend(p, catalog=None, rules=None, today=None):
         effective_rent=rent if applicable else None
         budget=p.get('max_monthly_rent')
         if effective_rent is not None and budget is not None and effective_rent>budget: continue
+        # 적용 임대료를 확인하지 못해도 요약 참고가가 이미 상한보다 비싸면 목록에서 뺀다. (상한 이내는 '예산 충족 미확인'으로 유지)
+        if effective_rent is None and rent is not None and budget is not None and rent>budget: continue
         state=recruitment_status(item,today)
         reasons=['희망 지역 일치']
         reasons.append('적용 임대료 추가 확인 필요 · 예산 충족 미확인' if effective_rent is None else '희망 월세 이내' if budget is not None else '검증된 임대조건 참고')
