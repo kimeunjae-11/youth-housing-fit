@@ -31,7 +31,10 @@ export function buildRequest(condition) {
     income_scope: 'self',
     household_size: 1,
     children_after_20230328: 0,
-    // car_value 는 폼에 없어 보내지 않는다. 자동차 가액은 '추가 확인 필요' 항목으로 남는다.
+  }
+  // 자동차 가액은 선택 입력이다. 비우면 보내지 않아 '추가 확인 필요' 항목으로 남는다.
+  if (condition.car_value != null) {
+    request.car_value = condition.car_value * WON_PER_MAN
   }
   if (condition.max_rent != null) {
     request.max_monthly_rent = condition.max_rent * WON_PER_MAN

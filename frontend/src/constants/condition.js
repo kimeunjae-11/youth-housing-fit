@@ -9,8 +9,8 @@ export const HOMELESS_OPTIONS = [
 ]
 
 export const MARITAL_OPTIONS = [
-  { value: 'single', label: '혼인 중 아님' },
-  { value: 'married', label: '혼인 중' },
+  { value: 'single', label: '미혼' },
+  { value: 'married', label: '기혼' },
 ]
 
 export const SUBSCRIPTION_OPTIONS = [
@@ -32,6 +32,7 @@ export const INITIAL_VALUES = {
   age: '',
   income: '',
   assets: '',
+  car_value: '',
   marital_status: '',
   homeless_status: '',
   subscription_account: '',
@@ -44,6 +45,7 @@ export const EXAMPLE_VALUES = {
   age: '26',
   income: '250',
   assets: '5000',
+  car_value: '',
   marital_status: 'single',
   homeless_status: 'homeless',
   subscription_account: 'active',
@@ -56,6 +58,7 @@ export const FIELD_ORDER = [
   'age',
   'income',
   'assets',
+  'car_value',
   'marital_status',
   'homeless_status',
   'subscription_account',
@@ -99,6 +102,12 @@ export function validateCondition(values) {
     if (message) errors.assets = message
   }
 
+  // 자동차 가액은 선택 입력: 비워 두면 '추가 확인 필요'로 남는다. 차량이 없으면 0 을 입력한다.
+  if (!isBlank(values.car_value)) {
+    const message = checkNonNegativeInteger(values.car_value, '자동차 가액')
+    if (message) errors.car_value = message
+  }
+
   if (!values.marital_status) {
     errors.marital_status = '혼인 상태를 선택해 주세요.'
   }
@@ -130,6 +139,7 @@ export function toPayload(values) {
     age: Number(values.age),
     income: Number(values.income),
     assets: Number(values.assets),
+    car_value: isBlank(values.car_value) ? null : Number(values.car_value),
     marital_status: values.marital_status,
     homeless_status: values.homeless_status,
     subscription_account: values.subscription_account,
@@ -144,6 +154,7 @@ export function toFormValues(payload) {
     age: String(payload.age),
     income: String(payload.income),
     assets: String(payload.assets),
+    car_value: payload.car_value == null ? '' : String(payload.car_value),
     marital_status: payload.marital_status ?? '',
     homeless_status: payload.homeless_status,
     subscription_account: payload.subscription_account,

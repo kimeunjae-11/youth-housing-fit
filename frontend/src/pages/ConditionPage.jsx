@@ -240,6 +240,17 @@ export default function ConditionPage() {
                 error={errors.assets}
                 onChange={handleChange}
               />
+              <NumberField
+                name="car_value"
+                label="자동차 가액"
+                optional
+                unit="만원"
+                placeholder="예: 0"
+                hint="차량이 없으면 0을 입력해 주세요."
+                value={values.car_value}
+                error={errors.car_value}
+                onChange={handleChange}
+              />
               <SegmentedField
                 name="marital_status"
                 label="혼인 상태"
@@ -282,6 +293,7 @@ export default function ConditionPage() {
                 optional
                 unit="만원"
                 placeholder="예: 30"
+                hint="참고용 주택 목록에만 적용돼요. 자격 판정에는 쓰이지 않아요."
                 value={values.max_rent}
                 error={errors.max_rent}
                 onChange={handleChange}
