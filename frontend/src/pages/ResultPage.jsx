@@ -12,6 +12,16 @@ const TYPE_LABELS = {
 
 const FALLBACK_ERROR_MESSAGE = '자격 판정에 실패했어요. 잠시 후 다시 시도해 주세요.'
 
+// 같은 항목 이름의 추가 확인 사유를 묶는다. (예: '공고문 예외 규칙' 여러 건)
+function groupReviews(reviews) {
+  const groups = new Map()
+  for (const { label, reason } of reviews) {
+    if (!groups.has(label)) groups.set(label, [])
+    groups.get(label).push(reason)
+  }
+  return [...groups].map(([label, reasons]) => ({ label, reasons }))
+}
+
 function getHeading({ status, data }) {
   if (status === 'loading') {
     return { title: '자격을 판정하고 있어요', subtitle: '입력하신 조건을 기준과 비교하는 중입니다.' }
@@ -164,11 +174,22 @@ function ResultContent({ condition }) {
                   <div className="rounded-xl bg-surface-container-low px-4 py-3 text-[14px] text-muted">
                     <p className="mb-1 font-semibold text-ink">추가로 확인할 항목 {data.additionalReview.length}개</p>
                     <ul className="list-disc space-y-0.5 pl-5">
-                      {data.additionalReview.map((review) => (
-                        <li key={`${review.label}-${review.reason}`}>
-                          <span className="font-semibold">{review.label}</span> · {review.reason}
-                        </li>
-                      ))}
+                      {groupReviews(data.additionalReview).map(({ label, reasons }) =>
+                        reasons.length === 1 ? (
+                          <li key={label}>
+                            <span className="font-semibold">{label}</span> · {reasons[0]}
+                          </li>
+                        ) : (
+                          <li key={label}>
+                            <span className="font-semibold">{label}</span> {reasons.length}건
+                            <ul className="list-[circle] space-y-0.5 pl-5">
+                              {reasons.map((reason) => (
+                                <li key={reason}>{reason}</li>
+                              ))}
+                            </ul>
+                          </li>
+                        ),
+                      )}
                     </ul>
                   </div>
                 )}
