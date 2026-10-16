@@ -227,6 +227,7 @@ function RecommendContent({ condition }) {
                     key={listing.id}
                     listing={{ ...listing, cautions: listing.cautions.filter((caution) => !commonCautions.includes(caution)) }}
                     isLowestRent={lowestRent != null && listing.applicableRent === lowestRent}
+                    budgetWon={condition.max_rent != null ? condition.max_rent * 10000 : null}
                   />
                 ))}
               </div>
