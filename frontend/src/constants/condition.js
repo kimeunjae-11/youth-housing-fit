@@ -45,7 +45,7 @@ export const EXAMPLE_VALUES = {
   age: '26',
   income: '250',
   assets: '5000',
-  car_value: '',
+  car_value: '0',
   marital_status: 'single',
   homeless_status: 'homeless',
   subscription_account: 'active',

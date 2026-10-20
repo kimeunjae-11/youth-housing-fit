@@ -31,7 +31,7 @@ const HOUSING_TYPES = [
   {
     key: 'purchase',
     name: '매입임대',
-    badge: '오산도시공사 연계 예정',
+    badge: '준비 중',
     description: '기존 다가구·다세대 주택을 매입하여 시세보다 저렴하게 청년층에 임대',
     enabled: false,
   },
