@@ -1,7 +1,7 @@
 const STEPS = ['조건 입력', '자격 판정', '참고 주택']
 
-// current: 1~3. 이전 단계는 완료 표시, 이후 단계는 흐리게
-export default function StepTracker({ current }) {
+// current: 1~3. detail: 현재 단계 옆에 붙는 보조 글자 (예: 조건 입력의 세부 단계). 이전 단계는 완료 표시, 이후 단계는 흐리게
+export default function StepTracker({ current, detail }) {
   return (
     <ol className="flex flex-col">
       {STEPS.map((label, index) => {
@@ -42,6 +42,9 @@ export default function StepTracker({ current }) {
                 }
               >
                 {label}
+                {active && detail && (
+                  <span className="ml-2 text-[13px] font-normal text-muted">{detail}</span>
+                )}
               </span>
             </div>
           </li>

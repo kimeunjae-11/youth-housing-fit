@@ -77,24 +77,39 @@ export const EXAMPLE_VALUES = {
   priority_3: '',
 }
 
-// 에러 포커스 이동 순서 (화면 위→아래, 왼→오른쪽)
-export const FIELD_ORDER = [
-  'age',
-  'income',
-  'assets',
-  'car_value',
-  'marital_status',
-  'homeless_status',
-  'subscription_account',
-  'region',
-  'max_rent',
-  'desired_area',
-  'max_deposit',
-  'deadline_pref',
-  'priority_1',
-  'priority_2',
-  'priority_3',
+// 조건 입력 화면의 단계. 한 화면에 한 단계씩 보여주고, 다음으로 넘어갈 때 그 단계의 필드만 검증한다.
+export const CONDITION_STEPS = [
+  {
+    key: 'basic',
+    title: '기본 정보',
+    description: '정확한 판정을 위해 현재 기준의 정보를 간단히 선택해 주세요.',
+    fields: ['age', 'marital_status', 'homeless_status', 'subscription_account'],
+  },
+  {
+    key: 'finance',
+    title: '소득·자산',
+    description: '본인 1인 가구 기준으로 입력해 주세요.',
+    fields: ['income', 'assets', 'car_value'],
+  },
+  {
+    key: 'preference',
+    title: '희망 조건',
+    description: '참고용 주택 목록을 고를 때 쓰는 조건이에요. 비워 둬도 돼요.',
+    fields: [
+      'region',
+      'max_rent',
+      'desired_area',
+      'max_deposit',
+      'deadline_pref',
+      'priority_1',
+      'priority_2',
+      'priority_3',
+    ],
+  },
 ]
+
+// 에러 포커스 이동 순서 (단계 순서 → 화면 위→아래, 왼→오른쪽)
+export const FIELD_ORDER = CONDITION_STEPS.flatMap((step) => step.fields)
 
 const isBlank = (value) => String(value).trim() === ''
 
@@ -199,6 +214,13 @@ export function validateCondition(values) {
   })
 
   return errors
+}
+
+// 한 단계(stepIndex)에 속한 필드의 에러만 돌려준다. 검증 규칙 자체는 validateCondition 하나만 쓴다.
+export function validateStep(values, stepIndex) {
+  const errors = validateCondition(values)
+  const fields = CONDITION_STEPS[stepIndex].fields
+  return Object.fromEntries(Object.entries(errors).filter(([name]) => fields.includes(name)))
 }
 
 // 폼 문자열 값 → 요청 JSON. 금액·나이는 숫자, 비운 선택 입력은 null
