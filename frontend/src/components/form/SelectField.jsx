@@ -5,6 +5,7 @@ export default function SelectField({
   label,
   options,
   required = false,
+  optional = false,
   value,
   error,
   onChange,
@@ -16,6 +17,7 @@ export default function SelectField({
       <label htmlFor={name} className={labelClass}>
         {label}
         {required && <RequiredMark />}
+        {optional && <span className="text-[13px] font-normal text-muted">(선택)</span>}
       </label>
       <div className="relative">
         <select
