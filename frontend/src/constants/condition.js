@@ -28,6 +28,17 @@ export const REGION_OPTIONS = [
   { value: 'gajang', label: '오산시 가장동 / 갈곶동 (준비 중)', disabled: true },
 ]
 
+// 희망 조건 우선순위: 순위(1~3)마다 아래 항목 중 하나를 고른다. (선택 입력)
+export const PRIORITY_SLOTS = ['priority_1', 'priority_2', 'priority_3']
+
+export const PRIORITY_OPTIONS = [
+  { value: '', label: '선택 안 함' },
+  { value: 'max_monthly_rent', label: '월 임대료 상한' },
+  { value: 'max_deposit', label: '보증금 상한' },
+  { value: 'desired_area', label: '희망 전용면적' },
+  { value: 'deadline_pref', label: '희망 접수 마감 기한' },
+]
+
 export const INITIAL_VALUES = {
   age: '',
   income: '',
@@ -42,6 +53,9 @@ export const INITIAL_VALUES = {
   desired_area: '',
   max_deposit: '',
   deadline_pref: '',
+  priority_1: '',
+  priority_2: '',
+  priority_3: '',
 }
 
 // '예시로 체험하기' 버튼이 채우는 값. 기본 조건을 충족하는 청년 1인 가구 예시
@@ -58,6 +72,9 @@ export const EXAMPLE_VALUES = {
   desired_area: '',
   max_deposit: '',
   deadline_pref: '',
+  priority_1: '',
+  priority_2: '',
+  priority_3: '',
 }
 
 // 에러 포커스 이동 순서 (화면 위→아래, 왼→오른쪽)
@@ -74,6 +91,9 @@ export const FIELD_ORDER = [
   'desired_area',
   'max_deposit',
   'deadline_pref',
+  'priority_1',
+  'priority_2',
+  'priority_3',
 ]
 
 const isBlank = (value) => String(value).trim() === ''
@@ -164,6 +184,20 @@ export function validateCondition(values) {
     errors.deadline_pref = '날짜를 올바르게 입력해 주세요.'
   }
 
+  // 우선순위는 선택 입력: 전부 비워도, 1순위만 골라도 통과.
+  // 앞 순위를 비우고 뒤 순위만 고르거나, 같은 항목을 두 순위에 고르면 에러.
+  const chosen = []
+  PRIORITY_SLOTS.forEach((slot, index) => {
+    const value = values[slot]
+    if (!value) return
+    if (index > 0 && !values[PRIORITY_SLOTS[index - 1]]) {
+      errors[slot] = `${index}순위를 먼저 선택해 주세요.`
+    } else if (chosen.includes(value)) {
+      errors[slot] = '이미 다른 순위에서 고른 항목이에요. 다른 항목을 골라 주세요.'
+    }
+    chosen.push(value)
+  })
+
   return errors
 }
 
@@ -182,6 +216,8 @@ export function toPayload(values) {
     desired_area: isBlank(values.desired_area) ? null : Number(values.desired_area),
     max_deposit: isBlank(values.max_deposit) ? null : Number(values.max_deposit),
     deadline_pref: isBlank(values.deadline_pref) ? null : values.deadline_pref,
+    // 순위 순서대로 항목 키 배열. 비운 순위는 뺀다.
+    priorities: PRIORITY_SLOTS.map((slot) => values[slot]).filter(Boolean),
   }
 }
 
@@ -200,5 +236,8 @@ export function toFormValues(payload) {
     desired_area: payload.desired_area == null ? '' : String(payload.desired_area),
     max_deposit: payload.max_deposit == null ? '' : String(payload.max_deposit),
     deadline_pref: payload.deadline_pref ?? '',
+    priority_1: payload.priorities?.[0] ?? '',
+    priority_2: payload.priorities?.[1] ?? '',
+    priority_3: payload.priorities?.[2] ?? '',
   }
 }

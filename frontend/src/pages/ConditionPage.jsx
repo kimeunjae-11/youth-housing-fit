@@ -14,6 +14,8 @@ import {
   HOMELESS_OPTIONS,
   INITIAL_VALUES,
   MARITAL_OPTIONS,
+  PRIORITY_OPTIONS,
+  PRIORITY_SLOTS,
   REGION_OPTIONS,
   SUBSCRIPTION_OPTIONS,
   toFormValues,
@@ -299,6 +301,35 @@ export default function ConditionPage() {
                 error={errors.deadline_pref}
                 onChange={handleChange}
               />
+            </div>
+
+            <div className="mt-5 border-t border-line-soft pt-3.5">
+              <h3 className="text-[15px] font-semibold text-accent-ink">희망 조건 우선순위</h3>
+              <p className="mb-3 mt-1 text-[13px] text-muted">
+                더 중요한 조건부터 순서대로 골라 주세요. 비워 둬도 돼요.
+              </p>
+              <div className="grid grid-cols-1 gap-x-5 gap-y-4 sm:grid-cols-3">
+                {PRIORITY_SLOTS.map((slot, index) => (
+                  <SelectField
+                    key={slot}
+                    name={slot}
+                    label={`${index + 1}순위`}
+                    optional
+                    // 다른 순위에서 이미 고른 항목은 고를 수 없게 막는다 (검증은 따로 유지)
+                    options={PRIORITY_OPTIONS.map((option) => ({
+                      ...option,
+                      disabled:
+                        option.value !== '' &&
+                        PRIORITY_SLOTS.some(
+                          (other) => other !== slot && values[other] === option.value,
+                        ),
+                    }))}
+                    value={values[slot]}
+                    error={errors[slot]}
+                    onChange={handleChange}
+                  />
+                ))}
+              </div>
             </div>
 
             <div className="mt-5 border-t border-line-soft pt-3.5">
