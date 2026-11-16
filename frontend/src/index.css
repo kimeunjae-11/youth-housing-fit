@@ -19,3 +19,28 @@
     'opsz' 24;
   vertical-align: middle;
 }
+
+/* 메인 첫 화면 진입. 220ms, 강한 ease-out. 지연은 --d 로 40ms씩 */
+@keyframes enter-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+@keyframes enter-fade {
+  from {
+    opacity: 0;
+  }
+}
+.enter-up {
+  animation: enter-up 220ms cubic-bezier(0.23, 1, 0.32, 1) var(--d, 0ms) both;
+}
+.enter-fade {
+  animation: enter-fade 220ms ease-out var(--d, 0ms) both;
+}
+/* 움직임은 빼고 페이드만 남긴다 */
+@media (prefers-reduced-motion: reduce) {
+  .enter-up {
+    animation-name: enter-fade;
+  }
+}

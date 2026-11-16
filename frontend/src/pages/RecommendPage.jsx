@@ -54,7 +54,7 @@ function getHeading(status, count, message) {
   }
 }
 
-const chipBase = 'rounded-full px-3 py-1 text-xs font-medium'
+const chipBase = 'rounded-full px-3.5 py-1.5 text-[13px] font-medium'
 
 function RecommendContent({ condition }) {
   const navigate = useNavigate()
@@ -100,7 +100,7 @@ function RecommendContent({ condition }) {
     setState({ status: 'loading' })
     setAttempt((count) => count + 1)
   }
-  const goBackToCondition = () => navigate('/', { state: { condition } })
+  const goBackToCondition = () => navigate('/condition', { state: { condition } })
 
   const { title, subtitle } = getHeading(status, items?.length, data?.message)
   const regionLabel = REGION_OPTIONS.find((option) => option.value === condition.region)?.label
@@ -110,28 +110,23 @@ function RecommendContent({ condition }) {
       <div className="grid w-full max-w-[1280px] grid-cols-1 items-center gap-10 lg:grid-cols-[430px_minmax(0,1fr)]">
         <section className="flex flex-col gap-6">
           <div>
-            <h1 className="mb-3 break-keep text-[32px] font-bold leading-[1.22] tracking-tight text-ink lg:text-[44px]">
+            <h1 className="mb-4 break-keep text-[clamp(2rem,3.4vw,2.75rem)] font-semibold leading-[1.22] tracking-[-0.035em] text-accent-ink">
               {title}
             </h1>
-            <p className="max-w-md text-[15.5px] leading-relaxed text-muted">{subtitle}</p>
+            <p className="max-w-md text-base leading-[1.65] text-muted sm:text-[17px]">{subtitle}</p>
           </div>
           <StepTracker current={3} />
         </section>
 
-        <section className="flex min-w-0 flex-col gap-3" aria-busy={status === 'loading'}>
-          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 pb-1 text-xs">
+        <section className="flex min-w-0 flex-col gap-3 rounded-xl bg-stage p-3 sm:p-5" aria-busy={status === 'loading'}>
+          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 pb-1 text-[13px]">
             <ul className="flex flex-wrap items-center gap-2">
-              <li className={`${chipBase} flex items-center gap-1 bg-surface-container-low font-semibold text-primary`}>
-                <span className="material-symbols-outlined text-[13px]" aria-hidden="true">
-                  check
-                </span>
-                행복주택
-              </li>
+              <li className={`${chipBase} bg-accent font-semibold text-accent-ink`}>행복주택</li>
               {regionLabel && (
-                <li className={`${chipBase} border border-surface-variant bg-white text-on-surface`}>{regionLabel}</li>
+                <li className={`${chipBase} bg-white text-ink`}>{regionLabel}</li>
               )}
               {condition.max_rent != null && (
-                <li className={`${chipBase} border border-surface-variant bg-white text-on-surface`}>
+                <li className={`${chipBase} bg-white text-ink`}>
                   월 임대료 {condition.max_rent.toLocaleString('ko-KR')}만원 이하
                 </li>
               )}
@@ -140,7 +135,7 @@ function RecommendContent({ condition }) {
               <button
                 type="button"
                 onClick={goBackToCondition}
-                className="inline-flex items-center gap-1 text-xs font-semibold text-secondary underline transition-colors hover:text-on-surface"
+                className="inline-flex min-h-[44px] items-center gap-1 text-[14px] font-semibold text-accent-ink underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-ink"
               >
                 <span className="material-symbols-outlined text-[13px]" aria-hidden="true">
                   tune
@@ -159,7 +154,7 @@ function RecommendContent({ condition }) {
                     aria-label="정렬 기준"
                     value={sortKey}
                     onChange={(event) => setSortKey(event.target.value)}
-                    className="cursor-pointer appearance-none rounded-xl border border-surface-variant bg-white py-1.5 pl-9 pr-9 text-xs font-medium text-on-surface shadow-sm transition-all hover:bg-surface focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20"
+                    className="min-h-[44px] cursor-pointer appearance-none rounded-lg border border-line-strong bg-white py-1.5 pl-9 pr-9 text-[14px] font-medium text-ink transition-colors hover:bg-surface focus:border-accent-ink focus:outline-none focus:ring-2 focus:ring-accent/40"
                   >
                     {SORT_OPTIONS.map((option) => (
                       <option key={option.value} value={option.value}>
@@ -215,7 +210,7 @@ function RecommendContent({ condition }) {
                 참고용 공고 {items.length}건
               </p>
               {commonCautions.length > 0 && (
-                <ul className="list-disc space-y-0.5 rounded-xl bg-surface-container-low px-4 py-2.5 pl-8 text-xs text-muted">
+                <ul className="list-disc space-y-0.5 rounded-lg bg-surface-container-low px-4 py-3 pl-8 text-[13px] text-muted">
                   {commonCautions.map((caution) => (
                     <li key={caution}>{caution}</li>
                   ))}
@@ -235,7 +230,7 @@ function RecommendContent({ condition }) {
           )}
 
           {status === 'success' && (
-            <p className="px-1 pt-1 text-right text-xs text-subtle">공고 데이터 기준일 {formatDate(data.dataDate)}</p>
+            <p className="px-1 pt-1 text-right text-[13px] text-on-primary-fixed-variant">공고 데이터 기준일 {formatDate(data.dataDate)}</p>
           )}
         </section>
       </div>

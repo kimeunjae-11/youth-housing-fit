@@ -19,7 +19,7 @@ export default function NumberField({
       <label htmlFor={name} className={labelClass}>
         {label}
         {required && <RequiredMark />}
-        {optional && <span className="text-xs font-normal text-subtle">(선택)</span>}
+        {optional && <span className="text-[13px] font-normal text-muted">(선택)</span>}
       </label>
       <div className="relative flex items-center">
         <input
@@ -34,13 +34,13 @@ export default function NumberField({
           aria-required={required}
           aria-invalid={Boolean(error)}
           aria-describedby={error || hint ? messageId : undefined}
-          className={`h-[42px] w-full rounded-xl border bg-white px-3.5 pr-12 text-[13px] font-semibold text-ink transition-all placeholder:font-normal placeholder:text-subtle focus:outline-none focus:ring-2 ${
+          className={`h-[46px] w-full rounded-lg border bg-white px-3.5 pr-14 text-base font-medium text-ink transition-colors placeholder:font-normal placeholder:text-muted focus:outline-none focus:ring-2 ${
             error
               ? 'border-error focus:border-error focus:ring-error/20'
-              : 'border-line-strong focus:border-accent focus:ring-accent/20'
+              : 'border-line-strong focus:border-accent-ink focus:ring-accent/40'
           }`}
         />
-        <span className="pointer-events-none absolute right-3.5 text-[13px] font-medium text-subtle">
+        <span className="pointer-events-none absolute right-3.5 text-[15px] text-muted">
           {unit}
         </span>
       </div>

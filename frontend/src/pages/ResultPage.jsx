@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { checkEligibility } from '../api/eligibility.js'
+import ArrowIcon from '../components/ArrowIcon.jsx'
 import StateMessage, { softButtonClass } from '../components/StateMessage.jsx'
 import StepTracker from '../components/StepTracker.jsx'
 import EligibilityTable from '../components/result/EligibilityTable.jsx'
@@ -83,7 +84,7 @@ function ResultContent({ condition }) {
     setState({ status: 'loading' })
     setAttempt((count) => count + 1)
   }
-  const goBackToCondition = () => navigate('/', { state: { condition } })
+  const goBackToCondition = () => navigate('/condition', { state: { condition } })
   const goToRecommend = () => navigate('/recommend', { state: { condition } })
 
   return (
@@ -91,21 +92,16 @@ function ResultContent({ condition }) {
       <div className="grid w-full max-w-[1280px] grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-11">
         <section className="flex flex-col gap-6 lg:col-span-5">
           <div>
-            <h1 className="mb-3 break-keep text-[32px] font-bold leading-[1.22] tracking-tight text-ink lg:text-[44px]">
+            <h1 className="mb-4 break-keep text-[clamp(2rem,3.4vw,2.75rem)] font-semibold leading-[1.22] tracking-[-0.035em] text-accent-ink">
               {title}
             </h1>
-            <p className="max-w-md text-[15.5px] leading-relaxed text-subtle">{subtitle}</p>
+            <p className="max-w-md text-base leading-[1.65] text-muted sm:text-[17px]">{subtitle}</p>
           </div>
           <StepTracker current={2} />
-          <div className="flex flex-col gap-1.5 text-xs text-subtle">
-            <p className="flex items-center gap-1.5">
-              <span className="material-symbols-outlined text-[16px]" aria-hidden="true">
-                info
-              </span>
-              실제 신청 자격은 공고문에서 최종 확인하세요.
-            </p>
+          <div className="flex flex-col gap-1.5 text-[14px] text-muted">
+            <p>실제 신청 자격은 공고문에서 최종 확인하세요.</p>
             {status === 'success' && (
-              <p className="pl-[22px]">
+              <p>
                 판정 기준: {data.criteriaSource} · 기준일 {formatDate(data.criteriaDate)}
                 {data.sourceUrl && (
                   <>
@@ -114,7 +110,7 @@ function ResultContent({ condition }) {
                       href={data.sourceUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="font-semibold text-secondary underline hover:text-on-surface"
+                      className="font-semibold text-accent-ink underline"
                     >
                       공고 원문
                     </a>
@@ -125,11 +121,10 @@ function ResultContent({ condition }) {
           </div>
         </section>
 
-        <section className="lg:col-span-7" aria-busy={status === 'loading'}>
-          <div className="flex flex-col gap-3.5 rounded-[20px] border border-line-soft bg-white p-6 shadow-card">
-            <div className="flex items-center gap-2 border-b border-line-soft pb-3">
-              <span className="h-2.5 w-2.5 rounded-full bg-accent" aria-hidden="true" />
-              <h2 className="text-[17px] font-bold text-ink">판정 근거</h2>
+        <section className="rounded-xl bg-stage p-3 sm:p-5 lg:col-span-7" aria-busy={status === 'loading'}>
+          <div className="flex flex-col gap-3.5 rounded-2xl bg-white ring-1 ring-stage-line/50 p-6 sm:p-8">
+            <div className="border-b border-line-soft pb-3">
+              <h2 className="text-[20px] font-semibold tracking-[-0.02em] text-accent-ink">판정 근거</h2>
             </div>
 
             {status === 'loading' && <StateMessage variant="loading" message="자격을 판정하고 있어요…" />}
@@ -157,7 +152,7 @@ function ResultContent({ condition }) {
                 {failedItems.length > 0 && (
                   <div
                     role="alert"
-                    className="rounded-xl bg-error-container px-4 py-3 text-[14px] text-on-error-container"
+                    className="rounded-lg bg-error-container px-4 py-3 text-[14px] text-on-error-container"
                   >
                     <p className="mb-1 font-semibold">충족하지 못한 항목 {failedItems.length}개</p>
                     <ul className="list-disc space-y-0.5 pl-5">
@@ -171,7 +166,7 @@ function ResultContent({ condition }) {
                 )}
 
                 {data.additionalReview.length > 0 && (
-                  <div className="rounded-xl bg-surface-container-low px-4 py-3 text-[14px] text-muted">
+                  <div className="rounded-lg bg-surface-container-low px-4 py-3 text-[14px] text-muted">
                     <p className="mb-1 font-semibold text-ink">추가로 확인할 항목 {data.additionalReview.length}개</p>
                     <ul className="list-disc space-y-0.5 pl-5">
                       {groupReviews(data.additionalReview).map(({ label, reasons }) =>
@@ -198,7 +193,7 @@ function ResultContent({ condition }) {
 
             <div className="flex flex-col gap-2 border-t border-line-soft pt-3">
               {status === 'success' && !isEmpty && data.status === 'not_met' && (
-                <p className="text-[13px] text-muted">
+                <p className="text-[14px] text-muted">
                   기준에 맞지 않는 항목이 있으면 맞춤 주택을 볼 수 없어요. 조건을 수정해 다시 확인해 보세요.
                 </p>
               )}
@@ -214,12 +209,10 @@ function ResultContent({ condition }) {
                   type="button"
                   onClick={goToRecommend}
                   disabled={!canProceed}
-                  className="flex items-center gap-2 rounded-full bg-accent px-8 py-3 text-base font-bold text-accent-ink shadow-md shadow-accent/30 transition-all hover:bg-accent-hover active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none disabled:hover:bg-accent disabled:active:scale-100"
+                  className="group inline-flex min-h-[44px] items-center gap-2 rounded-full bg-accent px-6 py-3 text-base font-medium text-accent-ink transition-[transform,background-color] duration-150 ease-out hover:bg-accent-hover active:scale-[0.97] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-ink disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-accent disabled:active:scale-100"
                 >
-                  <span>맞춤 주택 보기</span>
-                  <span className="material-symbols-outlined text-[18px]" aria-hidden="true">
-                    arrow_forward
-                  </span>
+                  맞춤 주택 보기
+                  <ArrowIcon />
                 </button>
               </div>
             </div>
