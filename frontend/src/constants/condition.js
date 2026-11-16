@@ -38,6 +38,10 @@ export const INITIAL_VALUES = {
   subscription_account: '',
   region: 'all',
   max_rent: '',
+  // 희망 조건 (모두 선택 입력). 백엔드 필드명이 정해지면 request.js 에서 매핑한다.
+  desired_area: '',
+  max_deposit: '',
+  deadline_pref: '',
 }
 
 // '예시로 체험하기' 버튼이 채우는 값. 기본 조건을 충족하는 청년 1인 가구 예시
@@ -51,6 +55,9 @@ export const EXAMPLE_VALUES = {
   subscription_account: 'active',
   region: 'all',
   max_rent: '',
+  desired_area: '',
+  max_deposit: '',
+  deadline_pref: '',
 }
 
 // 에러 포커스 이동 순서 (화면 위→아래, 왼→오른쪽)
@@ -64,6 +71,9 @@ export const FIELD_ORDER = [
   'subscription_account',
   'region',
   'max_rent',
+  'desired_area',
+  'max_deposit',
+  'deadline_pref',
 ]
 
 const isBlank = (value) => String(value).trim() === ''
