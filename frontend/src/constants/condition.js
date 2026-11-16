@@ -38,6 +38,10 @@ export const INITIAL_VALUES = {
   subscription_account: '',
   region: 'all',
   max_rent: '',
+  // 희망 조건 (모두 선택 입력). 백엔드 필드명이 정해지면 request.js 에서 매핑한다.
+  desired_area: '',
+  max_deposit: '',
+  deadline_pref: '',
 }
 
 // '예시로 체험하기' 버튼이 채우는 값. 기본 조건을 충족하는 청년 1인 가구 예시
@@ -51,6 +55,9 @@ export const EXAMPLE_VALUES = {
   subscription_account: 'active',
   region: 'all',
   max_rent: '',
+  desired_area: '',
+  max_deposit: '',
+  deadline_pref: '',
 }
 
 // 에러 포커스 이동 순서 (화면 위→아래, 왼→오른쪽)
@@ -64,6 +71,9 @@ export const FIELD_ORDER = [
   'subscription_account',
   'region',
   'max_rent',
+  'desired_area',
+  'max_deposit',
+  'deadline_pref',
 ]
 
 const isBlank = (value) => String(value).trim() === ''
@@ -74,6 +84,13 @@ function checkNonNegativeInteger(value, label) {
     return `${label}은(는) 0 이상의 정수로 입력해 주세요.`
   }
   return null
+}
+
+// 'YYYY-MM-DD' 형식이면서 실제로 있는 날짜인지 (예: 2026-02-31 은 거부)
+function isValidDate(value) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false
+  const date = new Date(`${value}T00:00:00Z`)
+  return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value
 }
 
 export function validateCondition(values) {
@@ -130,6 +147,23 @@ export function validateCondition(values) {
     if (message) errors.max_rent = message
   }
 
+  // 희망 조건은 모두 선택 입력: 비워 두면 통과, 입력했다면 형식만 검사
+  if (!isBlank(values.desired_area)) {
+    const area = Number(values.desired_area)
+    if (!Number.isInteger(area) || area <= 0) {
+      errors.desired_area = '전용면적은 0보다 큰 정수로 입력해 주세요.'
+    }
+  }
+
+  if (!isBlank(values.max_deposit)) {
+    const message = checkNonNegativeInteger(values.max_deposit, '보증금 상한')
+    if (message) errors.max_deposit = message
+  }
+
+  if (!isBlank(values.deadline_pref) && !isValidDate(values.deadline_pref)) {
+    errors.deadline_pref = '날짜를 올바르게 입력해 주세요.'
+  }
+
   return errors
 }
 
@@ -145,6 +179,9 @@ export function toPayload(values) {
     subscription_account: values.subscription_account,
     region: values.region,
     max_rent: isBlank(values.max_rent) ? null : Number(values.max_rent),
+    desired_area: isBlank(values.desired_area) ? null : Number(values.desired_area),
+    max_deposit: isBlank(values.max_deposit) ? null : Number(values.max_deposit),
+    deadline_pref: isBlank(values.deadline_pref) ? null : values.deadline_pref,
   }
 }
 
@@ -160,5 +197,8 @@ export function toFormValues(payload) {
     subscription_account: payload.subscription_account,
     region: payload.region,
     max_rent: payload.max_rent == null ? '' : String(payload.max_rent),
+    desired_area: payload.desired_area == null ? '' : String(payload.desired_area),
+    max_deposit: payload.max_deposit == null ? '' : String(payload.max_deposit),
+    deadline_pref: payload.deadline_pref ?? '',
   }
 }
