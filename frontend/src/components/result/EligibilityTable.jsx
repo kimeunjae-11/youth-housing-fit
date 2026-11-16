@@ -1,39 +1,21 @@
+// 배지·아이콘 없이 글자만으로 구분한다. 충족은 조용하게, 나머지는 굵게 + 밑줄로 눈에 띄게.
 function Verdict({ verdict }) {
   if (verdict === 'met') {
-    return (
-      <span className="inline-flex items-center gap-0.5 text-sm font-semibold text-ok">
-        <span className="material-symbols-outlined text-[16px]" aria-hidden="true">
-          check
-        </span>
-        충족
-      </span>
-    )
+    return <span className="text-base font-medium text-ok">충족</span>
   }
   if (verdict === 'not_met') {
-    return (
-      <span className="inline-flex items-center gap-0.5 text-sm font-semibold text-error">
-        <span className="material-symbols-outlined text-[16px]" aria-hidden="true">
-          close
-        </span>
-        미충족
-      </span>
-    )
+    return <span className="border-b-2 border-error pb-0.5 text-base font-bold text-error">미충족</span>
   }
   // unknown: 입력이 없거나 심사 범위를 알 수 없어 충족 여부를 정하지 못한 항목. 충족으로 보여주지 않는다.
   return (
-    <span className="inline-flex items-center gap-0.5 text-sm font-semibold text-subtle">
-      <span className="material-symbols-outlined text-[16px]" aria-hidden="true">
-        help
-      </span>
-      확인 필요
-    </span>
+    <span className="border-b-2 border-accent pb-0.5 text-base font-bold text-accent-ink">확인 필요</span>
   )
 }
 
 // 항목별 판정 표. 좁은 화면에서는 항목·판정이 윗줄, 내 입력·기준이 아랫줄로 쌓인다.
 export default function EligibilityTable({ items }) {
   return (
-    <div role="table" aria-label="판정 근거">
+    <div role="table" aria-label="판정 근거" className="[font-feature-settings:'tnum']">
       <div
         role="row"
         className="hidden grid-cols-12 rounded-xl bg-surface-container-low px-3.5 py-2.5 text-[15px] font-semibold text-muted md:grid"
@@ -70,7 +52,7 @@ export default function EligibilityTable({ items }) {
             </span>
             <span
               role="cell"
-              className="order-3 col-span-1 text-[15.5px] font-bold text-ink md:order-2 md:col-span-3"
+              className="order-3 col-span-1 text-[15.5px] font-semibold text-ink md:order-2 md:col-span-3"
             >
               {item.input}
             </span>

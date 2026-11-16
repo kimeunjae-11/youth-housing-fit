@@ -1,8 +1,8 @@
 import { formatDate, formatKrw } from '../../utils/format.js'
 
-const badgeBase = 'inline-flex whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-semibold'
-const badgeClass = `${badgeBase} bg-accent-soft text-primary`
-const closedBadgeClass = `${badgeBase} bg-surface-container text-subtle`
+const badgeBase = 'inline-flex whitespace-nowrap text-[14px]'
+const badgeClass = `${badgeBase} border-b-2 border-accent pb-0.5 font-bold text-accent-ink`
+const closedBadgeClass = `${badgeBase} font-medium text-muted`
 
 // 모집 상태 배지. 문구는 서버의 status_label 을 그대로 쓴다. (마감 공고는 '접수 마감 · 참고용')
 function StatusBadge({ recruitmentStatus, statusLabel }) {
@@ -49,29 +49,29 @@ export default function ListingCard({ listing, isLowestRent, budgetWon = null })
   }
 
   return (
-    <article className="flex flex-col gap-3 rounded-[20px] border border-line-soft bg-white p-4 shadow-listing transition-all hover:-translate-y-0.5 hover:shadow-listing-hover sm:flex-row sm:items-center sm:gap-5">
+    <article className="flex flex-col gap-3 rounded-2xl bg-white ring-1 ring-stage-line/50 p-5 sm:flex-row sm:items-center sm:gap-5">
       <div className="min-w-0 flex-1">
-        <div className="mb-1.5 flex flex-wrap items-center gap-2">
+        <div className="mb-2 flex flex-wrap items-center gap-3">
           {isLowestRent && <span className={badgeClass}>임대료 최저</span>}
           <StatusBadge recruitmentStatus={recruitmentStatus} statusLabel={statusLabel} />
         </div>
-        <h2 className="mb-1 truncate text-[18px] font-bold text-ink">{name}</h2>
+        <h2 className="mb-1 truncate text-[19px] font-semibold tracking-[-0.02em] text-accent-ink">{name}</h2>
         <p className="truncate text-sm text-muted">
           {address}
           {area != null && ` · ${area}㎡`}
         </p>
-        <p className="text-sm text-subtle">{recruitPeriod(recruitStart, recruitEnd)}</p>
+        <p className="text-sm text-muted">{recruitPeriod(recruitStart, recruitEnd)}</p>
         {budgetNote && (
           <p
-            className={`mt-1.5 text-xs font-semibold ${
-              referenceRent > budgetWon ? 'text-error' : 'text-subtle'
+            className={`mt-1.5 text-[13px] font-semibold ${
+              referenceRent > budgetWon ? 'text-error' : 'text-muted'
             }`}
           >
             {budgetNote}
           </p>
         )}
         {cautions.length > 0 && (
-          <ul className="mt-1.5 list-disc space-y-0.5 pl-4 text-xs text-subtle">
+          <ul className="mt-1.5 list-disc space-y-0.5 pl-4 text-[13px] text-muted">
             {cautions.map((caution) => (
               <li key={caution}>{caution}</li>
             ))}
@@ -80,9 +80,9 @@ export default function ListingCard({ listing, isLowestRent, budgetWon = null })
       </div>
 
       <div className="shrink-0 sm:max-w-[200px] sm:pl-2 sm:text-right">
-        <div className="whitespace-nowrap text-xl font-bold text-ink">{rentText}</div>
+        <div className="whitespace-nowrap text-xl font-semibold text-ink [font-feature-settings:'tnum']">{rentText}</div>
         {deposit != null && <div className="whitespace-nowrap text-sm text-muted">보증금 {formatKrw(deposit)}</div>}
-        {priceLabel && <div className="mt-0.5 text-xs text-subtle">{priceLabel}</div>}
+        {priceLabel && <div className="mt-0.5 text-[13px] text-muted">{priceLabel}</div>}
       </div>
 
       {noticeUrl ? (
@@ -91,7 +91,7 @@ export default function ListingCard({ listing, isLowestRent, budgetWon = null })
           target="_blank"
           rel="noopener noreferrer"
           aria-label={`${name} 공고문 보기 (새 탭)`}
-          className="flex shrink-0 items-center justify-center gap-1 rounded-full bg-accent-soft px-4 py-2.5 text-sm font-semibold text-primary transition-colors hover:bg-primary-fixed"
+          className="flex min-h-[44px] shrink-0 items-center justify-center gap-1 rounded-full bg-accent-soft px-4 text-[15px] font-medium text-accent-ink transition-[transform,background-color] duration-150 ease-out hover:bg-primary-fixed active:scale-[0.97] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-ink"
         >
           <span>공고문 보기</span>
           <span className="material-symbols-outlined text-[16px]" aria-hidden="true">
@@ -99,7 +99,7 @@ export default function ListingCard({ listing, isLowestRent, budgetWon = null })
           </span>
         </a>
       ) : (
-        <span className="shrink-0 text-center text-xs text-subtle">공고문 링크 없음</span>
+        <span className="shrink-0 text-center text-[13px] text-muted">공고문 링크 없음</span>
       )}
     </article>
   )

@@ -1,0 +1,179 @@
+From be76a2e894da690dc1b1c047085b1bc8aed3f055 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 16 Oct 2026 13:23:50 +0900
+Subject: [PATCH] =?UTF-8?q?feat:=20=EC=9E=90=EB=8F=99=EC=B0=A8=20=EA=B0=80?=
+ =?UTF-8?q?=EC=95=A1=20=EC=9E=85=EB=A0=A5(=EC=84=A0=ED=83=9D)=20=EC=B6=94?=
+ =?UTF-8?q?=EA=B0=80,=20=ED=98=BC=EC=9D=B8=20=EC=83=81=ED=83=9C=20?=
+ =?UTF-8?q?=EC=84=A0=ED=83=9D=EC=A7=80=EB=A5=BC=20=EB=AF=B8=ED=98=BC/?=
+ =?UTF-8?q?=EA=B8=B0=ED=98=BC=EC=9C=BC=EB=A1=9C=20=EB=B3=80=EA=B2=BD,=20?=
+ =?UTF-8?q?=EC=9B=94=20=EC=9E=84=EB=8C=80=EB=A3=8C=20=EC=83=81=ED=95=9C=20?=
+ =?UTF-8?q?=EC=95=88=EB=82=B4=20=EB=AC=B8=EA=B5=AC=20=EC=B6=94=EA=B0=80?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01E2m3uUws1uwjcUTecycmLV
+---
+ docs/demo-guide.md                   |  2 +-
+ frontend/README.md                   |  2 +-
+ frontend/src/api/eligibility.js      |  2 +-
+ frontend/src/api/request.js          |  5 ++++-
+ frontend/src/constants/condition.js  | 15 +++++++++++++--
+ frontend/src/pages/ConditionPage.jsx | 12 ++++++++++++
+ 6 files changed, 32 insertions(+), 6 deletions(-)
+
+diff --git a/docs/demo-guide.md b/docs/demo-guide.md
+index 74f015a..762fa2e 100644
+--- a/docs/demo-guide.md
++++ b/docs/demo-guide.md
+@@ -24,7 +24,7 @@
+ | 만 나이 | 26 | 26 |
+ | 월 평균 소득 | 250만원 | 600만원 |
+ | 총 자산 | 5000만원 | 5000만원 |
+-| 혼인 상태 | 혼인 중 아님 | 혼인 중 아님 |
++| 혼인 상태 | 미혼 | 미혼 |
+ | 무주택 여부 | 무주택 | 무주택 |
+ | 청약통장 | 가입 | 가입 |
+ | 희망 지역 | 오산시 전체 | 오산시 전체 |
+diff --git a/frontend/README.md b/frontend/README.md
+index 073b5d8..2c498fd 100644
+--- a/frontend/README.md
++++ b/frontend/README.md
+@@ -57,5 +57,5 @@ cd frontend && npm run dev          # http://localhost:5173
+ | --- | --- | --- |
+ | 서버 연결 실패 | 백엔드를 끄고 진단하기 | 연결 실패 안내와 다시 시도 버튼 |
+ | 기준 미충족 | 월 소득 `600` 이상 입력 | `/result`에서 미충족 항목과 초과 사유 |
+-| 추가 확인 필요 | 월 소득 `250`, 총 자산 `5000`, 혼인 중 아님, 무주택 | `/result`에서 기본 조건 충족 + 추가 확인 목록 |
++| 추가 확인 필요 | 월 소득 `250`, 총 자산 `5000`, 미혼, 무주택 | `/result`에서 기본 조건 충족 + 추가 확인 목록 |
+ | 예시 입력 | "예시로 체험하기" 버튼 | 폼이 예시 값으로 채워짐 |
+diff --git a/frontend/src/api/eligibility.js b/frontend/src/api/eligibility.js
+index 89cb9cb..29b723f 100644
+--- a/frontend/src/api/eligibility.js
++++ b/frontend/src/api/eligibility.js
+@@ -18,7 +18,7 @@ function formatInput(check) {
+     case 'homeless':
+       return value ? '무주택' : '주택 보유'
+     case 'marital_status':
+-      return value === 'single' ? '혼인 중 아님' : '혼인 중'
++      return value === 'single' ? '미혼' : '기혼'
+     case 'housing_subscription':
+       return value ? '가입' : '미가입'
+     default:
+diff --git a/frontend/src/api/request.js b/frontend/src/api/request.js
+index ddad4fa..2068b02 100644
+--- a/frontend/src/api/request.js
++++ b/frontend/src/api/request.js
+@@ -31,7 +31,10 @@ export function buildRequest(condition) {
+     income_scope: 'self',
+     household_size: 1,
+     children_after_20230328: 0,
+-    // car_value 는 폼에 없어 보내지 않는다. 자동차 가액은 '추가 확인 필요' 항목으로 남는다.
++  }
++  // 자동차 가액은 선택 입력이다. 비우면 보내지 않아 '추가 확인 필요' 항목으로 남는다.
++  if (condition.car_value != null) {
++    request.car_value = condition.car_value * WON_PER_MAN
+   }
+   if (condition.max_rent != null) {
+     request.max_monthly_rent = condition.max_rent * WON_PER_MAN
+diff --git a/frontend/src/constants/condition.js b/frontend/src/constants/condition.js
+index 275d54b..1462957 100644
+--- a/frontend/src/constants/condition.js
++++ b/frontend/src/constants/condition.js
+@@ -9,8 +9,8 @@ export const HOMELESS_OPTIONS = [
+ ]
+ 
+ export const MARITAL_OPTIONS = [
+-  { value: 'single', label: '혼인 중 아님' },
+-  { value: 'married', label: '혼인 중' },
++  { value: 'single', label: '미혼' },
++  { value: 'married', label: '기혼' },
+ ]
+ 
+ export const SUBSCRIPTION_OPTIONS = [
+@@ -32,6 +32,7 @@ export const INITIAL_VALUES = {
+   age: '',
+   income: '',
+   assets: '',
++  car_value: '',
+   marital_status: '',
+   homeless_status: '',
+   subscription_account: '',
+@@ -44,6 +45,7 @@ export const EXAMPLE_VALUES = {
+   age: '26',
+   income: '250',
+   assets: '5000',
++  car_value: '',
+   marital_status: 'single',
+   homeless_status: 'homeless',
+   subscription_account: 'active',
+@@ -56,6 +58,7 @@ export const FIELD_ORDER = [
+   'age',
+   'income',
+   'assets',
++  'car_value',
+   'marital_status',
+   'homeless_status',
+   'subscription_account',
+@@ -99,6 +102,12 @@ export function validateCondition(values) {
+     if (message) errors.assets = message
+   }
+ 
++  // 자동차 가액은 선택 입력: 비워 두면 '추가 확인 필요'로 남는다. 차량이 없으면 0 을 입력한다.
++  if (!isBlank(values.car_value)) {
++    const message = checkNonNegativeInteger(values.car_value, '자동차 가액')
++    if (message) errors.car_value = message
++  }
++
+   if (!values.marital_status) {
+     errors.marital_status = '혼인 상태를 선택해 주세요.'
+   }
+@@ -130,6 +139,7 @@ export function toPayload(values) {
+     age: Number(values.age),
+     income: Number(values.income),
+     assets: Number(values.assets),
++    car_value: isBlank(values.car_value) ? null : Number(values.car_value),
+     marital_status: values.marital_status,
+     homeless_status: values.homeless_status,
+     subscription_account: values.subscription_account,
+@@ -144,6 +154,7 @@ export function toFormValues(payload) {
+     age: String(payload.age),
+     income: String(payload.income),
+     assets: String(payload.assets),
++    car_value: payload.car_value == null ? '' : String(payload.car_value),
+     marital_status: payload.marital_status ?? '',
+     homeless_status: payload.homeless_status,
+     subscription_account: payload.subscription_account,
+diff --git a/frontend/src/pages/ConditionPage.jsx b/frontend/src/pages/ConditionPage.jsx
+index 3779b0a..84803cc 100644
+--- a/frontend/src/pages/ConditionPage.jsx
++++ b/frontend/src/pages/ConditionPage.jsx
+@@ -240,6 +240,17 @@ export default function ConditionPage() {
+                 error={errors.assets}
+                 onChange={handleChange}
+               />
++              <NumberField
++                name="car_value"
++                label="자동차 가액"
++                optional
++                unit="만원"
++                placeholder="예: 0"
++                hint="차량이 없으면 0을 입력해 주세요."
++                value={values.car_value}
++                error={errors.car_value}
++                onChange={handleChange}
++              />
+               <SegmentedField
+                 name="marital_status"
+                 label="혼인 상태"
+@@ -282,6 +293,7 @@ export default function ConditionPage() {
+                 optional
+                 unit="만원"
+                 placeholder="예: 30"
++                hint="참고용 주택 목록에만 적용돼요. 자격 판정에는 쓰이지 않아요."
+                 value={values.max_rent}
+                 error={errors.max_rent}
+                 onChange={handleChange}
+-- 
+2.43.0
+

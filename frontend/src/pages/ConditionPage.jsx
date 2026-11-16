@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { checkHealth } from '../api/health.js'
 import { useLocation, useNavigate } from 'react-router-dom'
+import ArrowIcon from '../components/ArrowIcon.jsx'
 import NumberField from '../components/form/NumberField.jsx'
 import SegmentedField from '../components/form/SegmentedField.jsx'
 import SelectField from '../components/form/SelectField.jsx'
@@ -44,47 +45,29 @@ const HOUSING_TYPES = [
   },
 ]
 
+// 카드 안의 카드가 되지 않도록 박스 없이 나열한다. 선택된 유형은 이름 밑줄로 표시.
 function HousingTypeCard({ type }) {
   if (type.enabled) {
     return (
-      <div className="flex flex-col rounded-xl border-2 border-accent bg-accent-soft p-3">
-        <div className="mb-1.5 flex flex-wrap items-center justify-between gap-1">
-          <div className="flex items-center gap-1.5">
-            <span
-              className="material-symbols-outlined text-[16px] text-accent"
-              style={{ fontVariationSettings: '"FILL" 1' }}
-              aria-hidden="true"
-            >
-              check_circle
-            </span>
-            <span className="whitespace-nowrap text-[14px] font-bold text-ink">{type.name}</span>
-          </div>
-          <span className="inline-flex items-center rounded-full bg-ok-soft px-2 py-0.5 text-[13px] font-semibold text-ok">
-            {type.badge}
+      <div className="flex flex-col">
+        <div className="mb-1.5 flex flex-wrap items-baseline justify-between gap-1">
+          <span className="whitespace-nowrap border-b-2 border-accent pb-0.5 text-[15px] font-semibold text-accent-ink">
+            {type.name}
           </span>
+          <span className="text-[13px] font-semibold text-ok">{type.badge}</span>
         </div>
-        <p className="text-[13px] leading-tight text-muted">{type.description}</p>
+        <p className="text-[13px] leading-snug text-muted">{type.description}</p>
       </div>
     )
   }
 
   return (
-    <div
-      aria-disabled="true"
-      className="flex cursor-not-allowed flex-col rounded-xl border border-line-soft bg-surface-container-low p-3 opacity-80"
-    >
-      <div className="mb-1.5 flex flex-wrap items-center justify-between gap-1">
-        <div className="flex items-center gap-1.5 text-subtle">
-          <span className="material-symbols-outlined text-[15px]" aria-hidden="true">
-            remove
-          </span>
-          <span className="whitespace-nowrap text-[14px] font-semibold">{type.name}</span>
-        </div>
-        <span className="inline-flex items-center rounded-full bg-surface-container px-2 py-0.5 text-[13px] font-medium text-subtle">
-          {type.badge}
-        </span>
+    <div aria-disabled="true" className="flex cursor-not-allowed flex-col">
+      <div className="mb-1.5 flex flex-wrap items-baseline justify-between gap-1">
+        <span className="whitespace-nowrap pb-0.5 text-[15px] font-medium text-muted">{type.name}</span>
+        <span className="text-[13px] text-muted">{type.badge}</span>
       </div>
-      <p className="text-[13px] leading-tight text-muted">{type.description}</p>
+      <p className="text-[13px] leading-snug text-muted">{type.description}</p>
     </div>
   )
 }
@@ -146,64 +129,52 @@ export default function ConditionPage() {
       <div className="grid w-full max-w-[1280px] grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-11">
         <section className="flex flex-col gap-6 lg:col-span-5">
           <div>
-            <h1 className="mb-3 text-[32px] font-bold leading-[1.22] tracking-tight text-ink lg:text-[44px]">
+            <h1 className="mb-4 text-[clamp(2rem,3.4vw,2.75rem)] font-semibold leading-[1.22] tracking-[-0.035em] text-accent-ink">
               오산시 청년 공공임대,
               <br />내 조건으로 확인하기
             </h1>
-            <p className="max-w-md text-[15.5px] leading-relaxed text-subtle">
+            <p className="max-w-md text-base leading-[1.65] text-muted sm:text-[17px]">
               조건을 입력하면 기본 자격 확인 결과와 참고용 주택 목록을 보여줍니다.
             </p>
           </div>
           <StepTracker current={1} />
-          <div className="flex items-center gap-2.5 rounded-2xl border border-line-soft bg-accent-soft/70 px-3.5 py-2.5 text-[13px] text-subtle">
-            <span
-              className="material-symbols-outlined text-[18px] text-accent"
-              style={{ fontVariationSettings: '"FILL" 1' }}
-              aria-hidden="true"
-            >
-              lock
-            </span>
-            <span>입력값은 서버에 저장되지 않고 판정에만 사용됩니다.</span>
-          </div>
+          <p className="text-[14px] text-muted">입력값은 서버에 저장되지 않고 판정에만 사용됩니다.</p>
           {health.status === 'ok' && (
-            <p className="px-1 text-[13px] text-subtle">
+            <p className="text-[14px] text-muted">
               LH·GH 행복주택 공고 기준 · 데이터 기준일 {formatDate(health.dataAsOf)}
             </p>
           )}
           {health.status === 'down' && (
-            <p role="alert" className="rounded-2xl bg-error-container px-3.5 py-2.5 text-[13px] font-medium text-on-error-container">
+            <p role="alert" className="rounded-lg bg-error-container px-3.5 py-2.5 text-[14px] font-medium text-on-error-container">
               판정 서버에 연결하지 못했어요. 백엔드 서버가 켜져 있는지 확인해 주세요.
             </p>
           )}
         </section>
 
-        <section className="lg:col-span-7">
+        <section className="rounded-xl bg-stage p-3 sm:p-5 lg:col-span-7">
           <form
             noValidate
             onSubmit={handleSubmit}
-            className="rounded-[20px] border border-line-soft bg-white p-7 shadow-card"
+            className="rounded-2xl bg-white ring-1 ring-stage-line/50 p-6 sm:p-8"
           >
             <div className="mb-4 border-b border-line-soft pb-3.5">
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <div className="flex items-center gap-2">
-                  <span className="h-2.5 w-2.5 rounded-full bg-accent" aria-hidden="true" />
-                  <h2 className="text-[18px] font-bold text-ink">기본 조건 입력</h2>
-                </div>
+                <h2 className="text-[20px] font-semibold tracking-[-0.02em] text-accent-ink">기본 조건 입력</h2>
                 <button
                   type="button"
                   onClick={fillExample}
-                  className="rounded-full border border-line-strong bg-white px-3.5 py-1.5 text-[13px] font-semibold text-ink transition-colors hover:bg-accent-soft"
+                  className="inline-flex min-h-[44px] items-center rounded-full border border-line-strong bg-white px-4 text-[14px] font-medium text-ink transition-[transform,background-color] duration-150 ease-out hover:bg-accent-soft active:scale-[0.97] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-ink"
                 >
                   예시로 체험하기
                 </button>
               </div>
-              <p className="mt-0.5 pl-[18px] text-[13px] text-subtle">
+              <p className="mt-1 text-[14px] text-muted">
                 정확한 판정을 위해 현재 기준의 정보를 간단히 선택해 주세요.
               </p>
             </div>
 
             {hasErrors && (
-              <p role="alert" className="mb-3 rounded-xl bg-error-container px-3.5 py-2 text-[13px] font-medium text-on-error-container">
+              <p role="alert" className="mb-3 rounded-lg bg-error-container px-3.5 py-2 text-[14px] font-medium text-on-error-container">
                 입력하지 않았거나 확인이 필요한 항목이 있어요.
               </p>
             )}
@@ -302,12 +273,12 @@ export default function ConditionPage() {
 
             <div className="mt-5 border-t border-line-soft pt-3.5">
               <div className="mb-2 flex flex-wrap items-center justify-between gap-x-4">
-                <h3 className="text-[14px] font-bold text-ink">판정 대상 유형</h3>
-                <p className="text-[13px] text-subtle">
+                <h3 className="text-[15px] font-semibold text-accent-ink">판정 대상 유형</h3>
+                <p className="text-[13px] text-muted">
                   진단하고자 하는 공공임대주택 유형을 선택하세요.
                 </p>
               </div>
-              <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-3">
+              <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
                 {HOUSING_TYPES.map((type) => (
                   <HousingTypeCard key={type.key} type={type} />
                 ))}
@@ -317,12 +288,10 @@ export default function ConditionPage() {
             <div className="mt-4 flex justify-end border-t border-line-soft pt-3.5">
               <button
                 type="submit"
-                className="flex items-center gap-2 rounded-full bg-accent px-8 py-3 text-base font-bold text-accent-ink shadow-md shadow-accent/30 transition-all hover:bg-accent-hover active:scale-[0.98]"
+                className="group inline-flex min-h-[44px] items-center gap-2 rounded-full bg-accent px-6 py-3 text-base font-medium text-accent-ink transition-[transform,background-color] duration-150 ease-out hover:bg-accent-hover active:scale-[0.97] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-ink"
               >
-                <span>자격 진단하기</span>
-                <span className="material-symbols-outlined text-[18px]" aria-hidden="true">
-                  arrow_forward
-                </span>
+                자격 진단하기
+                <ArrowIcon />
               </button>
             </div>
           </form>

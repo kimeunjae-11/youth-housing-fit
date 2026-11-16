@@ -18,7 +18,7 @@ export default function SegmentedField({
         {required && <RequiredMark />}
       </legend>
       <div
-        className={`grid h-[42px] grid-cols-2 gap-1.5 rounded-xl border bg-white p-1 ${
+        className={`grid h-[46px] grid-cols-2 gap-1.5 rounded-lg border bg-white p-1 ${
           error ? 'border-error' : 'border-line-strong'
         }`}
       >
@@ -27,10 +27,10 @@ export default function SegmentedField({
           return (
             <label
               key={option.value}
-              className={`flex cursor-pointer items-center justify-center gap-1 truncate rounded-lg px-1 text-[13px] transition-all has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-accent/40 ${
+              className={`flex cursor-pointer items-center justify-center truncate rounded-md px-1 text-[14px] transition-colors has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-accent-ink ${
                 selected
-                  ? 'border border-accent bg-accent-soft font-semibold text-ink'
-                  : 'font-medium text-subtle hover:text-ink'
+                  ? 'bg-accent font-semibold text-accent-ink'
+                  : 'font-medium text-muted hover:text-ink'
               }`}
             >
               <input
@@ -45,15 +45,6 @@ export default function SegmentedField({
                 aria-describedby={error ? messageId : undefined}
                 className="sr-only"
               />
-              {selected && (
-                <span
-                  className="material-symbols-outlined text-[15px] text-accent"
-                  style={{ fontVariationSettings: '"FILL" 1' }}
-                  aria-hidden="true"
-                >
-                  check_circle
-                </span>
-              )}
               <span className="truncate">{option.label}</span>
             </label>
           )

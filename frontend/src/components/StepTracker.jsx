@@ -14,14 +14,14 @@ export default function StepTracker({ current }) {
             {index > 0 && <div className="-my-0.5 ml-[1.1rem] h-3.5 w-0.5 bg-line" aria-hidden="true" />}
             <div
               className={`flex items-center gap-3.5 rounded-2xl ${
-                active ? 'border border-line-soft bg-white p-3 shadow-step' : 'p-2.5'
+                active ? 'bg-white p-3 ring-1 ring-stage-line/50' : 'p-2.5'
               }`}
             >
               <div
                 className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[13px] ${
                   active || done
-                    ? 'bg-accent font-bold text-white'
-                    : 'bg-surface-container font-semibold text-subtle'
+                    ? 'bg-accent font-bold text-accent-ink'
+                    : 'bg-surface-container font-semibold text-muted'
                 }`}
               >
                 {done ? (
@@ -38,7 +38,7 @@ export default function StepTracker({ current }) {
                     ? 'text-[15px] font-bold text-ink'
                     : done
                       ? 'text-[14.5px] font-medium text-ink'
-                      : 'text-[14px] font-medium text-subtle'
+                      : 'text-[14px] font-medium text-muted'
                 }
               >
                 {label}

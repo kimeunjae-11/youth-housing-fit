@@ -25,4 +25,4 @@ export function FieldMessage({ id, hint, error }) {
   return null
 }
 
-export const labelClass = 'flex items-center gap-1 text-[13px] font-semibold text-ink'
+export const labelClass = 'flex items-center gap-1 text-[14px] font-semibold text-ink'

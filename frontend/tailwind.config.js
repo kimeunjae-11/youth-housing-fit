@@ -17,6 +17,11 @@ export default {
           soft: '#FFF0E8', // 연한 포인트 (선택 상태, 칩 배경)
           ink: '#3A2620', // 포인트 배경 위 글자
         },
+        // 메인 화면 고정 패널과 그 위 카드의 윤곽선 (피치 계열)
+        stage: {
+          DEFAULT: '#F8D3C1',
+          line: '#E9B9A3',
+        },
         ok: {
           DEFAULT: '#1F7A55', // 충족
           soft: '#E4F6EE', // 충족 배지 배경
