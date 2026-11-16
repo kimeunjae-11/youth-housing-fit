@@ -39,5 +39,7 @@ export function buildRequest(condition) {
   if (condition.max_rent != null) {
     request.max_monthly_rent = condition.max_rent * WON_PER_MAN
   }
+  // TODO: API 필드 확정 후 매핑 — condition.desired_area(평), max_deposit(만원), deadline_pref(YYYY-MM-DD).
+  // backend/service.py 의 validate() 가 모르는 키를 422 로 거부하므로 지금은 요청에 넣지 않는다.
   return request
 }

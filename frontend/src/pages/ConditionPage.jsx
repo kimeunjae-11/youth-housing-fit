@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { checkHealth } from '../api/health.js'
 import { useLocation, useNavigate } from 'react-router-dom'
 import ArrowIcon from '../components/ArrowIcon.jsx'
+import DateField from '../components/form/DateField.jsx'
 import NumberField from '../components/form/NumberField.jsx'
 import SegmentedField from '../components/form/SegmentedField.jsx'
 import SelectField from '../components/form/SelectField.jsx'
@@ -267,6 +268,35 @@ export default function ConditionPage() {
                 hint="참고용 주택 목록에만 적용돼요. 자격 판정에는 쓰이지 않아요."
                 value={values.max_rent}
                 error={errors.max_rent}
+                onChange={handleChange}
+              />
+              <NumberField
+                name="desired_area"
+                label="희망 전용면적"
+                optional
+                unit="평"
+                placeholder="예: 10"
+                value={values.desired_area}
+                error={errors.desired_area}
+                onChange={handleChange}
+              />
+              <NumberField
+                name="max_deposit"
+                label="보증금 상한"
+                optional
+                unit="만원"
+                placeholder="예: 3000"
+                value={values.max_deposit}
+                error={errors.max_deposit}
+                onChange={handleChange}
+              />
+              <DateField
+                name="deadline_pref"
+                label="희망 접수 마감 기한"
+                optional
+                hint="이 날짜까지 접수할 수 있는 공고를 찾을 때 써요."
+                value={values.deadline_pref}
+                error={errors.deadline_pref}
                 onChange={handleChange}
               />
             </div>
