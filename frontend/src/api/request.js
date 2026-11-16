@@ -41,5 +41,6 @@ export function buildRequest(condition) {
   }
   // TODO: API 필드 확정 후 매핑 — condition.desired_area(평), max_deposit(만원), deadline_pref(YYYY-MM-DD).
   // backend/service.py 의 validate() 가 모르는 키를 422 로 거부하므로 지금은 요청에 넣지 않는다.
+  // TODO: API 필드 확정 후 매핑 — condition.priorities(순위 순서의 항목 키 배열)도 같은 이유로 보내지 않는다.
   return request
 }
