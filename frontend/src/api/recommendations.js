@@ -1,5 +1,6 @@
 import { postJson } from './client.js'
 import { buildRequest } from './request.js'
+import { buildRankingInput } from '../utils/rankingInput.js'
 
 const UNAVAILABLE_MESSAGE = '추천 공고 서버에 연결하지 못했어요. 잠시 후 다시 시도해 주세요.'
 
@@ -46,4 +47,35 @@ export async function fetchRecommendations(condition) {
   }))
 
   return { dataDate: data.data_as_of, message: data.message, items }
+}
+
+
+/**
+ * 사용자 희망조건을 반영한 가중치 기반 공고 추천
+ *
+ * notices: 공고 정보
+ * judgments: 공고별 자격판정 결과
+ * condition: 사용자 입력값
+ */
+export async function fetchRankedRecommendations(
+  notices,
+  judgments,
+  condition
+) {
+  // 입력 단위와 우선순위를 추천 계산 형식으로 변환
+  const { preferences, weights } = buildRankingInput(condition)
+
+  // Python 추천 알고리즘 API 호출
+  const result = await postJson(
+    '/api/recommendation-preview',
+    {
+      notices,
+      judgments,
+      preferences,
+      weights,
+    },
+    '맞춤 공고 추천 결과를 불러오지 못했어요.'
+  )
+
+  return result
 }

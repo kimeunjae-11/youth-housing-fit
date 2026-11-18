@@ -1,11 +1,13 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
-import { fetchRecommendations } from '../api/recommendations.js'
+import { fetchRecommendations, fetchRankedRecommendations } from '../api/recommendations.js'
 import StateMessage, { softButtonClass } from '../components/StateMessage.jsx'
 import StepTracker from '../components/StepTracker.jsx'
 import ListingCard from '../components/recommend/ListingCard.jsx'
 import { REGION_OPTIONS } from '../constants/condition.js'
 import { formatDate } from '../utils/format.js'
+import { buildRankingNotices } from '../utils/rankingNotices.js'
+import { buildRankingInput } from '../utils/rankingInput.js'
 
 const FALLBACK_ERROR_MESSAGE = '추천 공고를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.'
 
@@ -78,6 +80,46 @@ function RecommendContent({ condition }) {
 
   const { status, data, message } = state
   const items = data?.items
+
+  // 개발 단계: 기존 참고용 공고를 추천 알고리즘에 전달해 연결 확인
+  const [rankingState, setRankingState] = useState({
+    status: 'idle',
+  })
+
+  useEffect(() => {
+    if (!items) return
+
+    let cancelled = false
+
+    const notices = buildRankingNotices(items)
+    
+
+    // 공고별 자격판정 결과는 아직 연동되지 않음
+    const judgments = {}
+
+    setRankingState({ status: 'loading' })
+
+    fetchRankedRecommendations(notices, judgments, condition)
+      .then((result) => {
+        if (!cancelled) {
+          setRankingState({ status: 'success', result })
+        }
+      })
+      .catch((error) => {
+        if (!cancelled) {
+          setRankingState({
+            status: 'error',
+            message: error?.message,
+          })
+        }
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [items, condition])
+
+
 
   const sortedItems = useMemo(() => {
     if (!items) return []
@@ -172,6 +214,116 @@ function RecommendContent({ condition }) {
               )}
             </div>
           </div>
+          
+          {/* 개발 환경에서만 추천 API 연결 상태 표시 */}
+          {import.meta.env.DEV && (
+            <div className="rounded-lg border border-line-strong bg-white p-4 text-[13px] text-muted">
+              <p className="mb-2 font-semibold text-ink">
+                추천 알고리즘 연결 확인 (개발용)
+              </p>
+
+              {rankingState.status === 'loading' && (
+                <p>추천 API 호출 중...</p>
+              )}
+
+              {rankingState.status === 'success' && (
+                <div className="space-y-1">
+                  <p>추천 API 연결 성공</p>
+                  <p>
+                    적용된 가중치: {JSON.stringify(buildRankingInput(condition).weights)}
+                  </p>
+                  <p>
+                    자격 미확인 공고: {rankingState.result.unverified.length}건
+                  </p>
+                  <p>
+                    추천 TOP 3: {rankingState.result.top3.length}건
+                  </p>
+                  <p>
+                    모집 마감 공고: {rankingState.result.closed?.length ?? 0}건
+                  </p>
+                  <p>
+                    현재는 공고별 자격판정 결과가 없어 추천 대상을 확정하지 않습니다.
+                  </p>
+                </div>
+              )}
+
+              {rankingState.status === 'error' && (
+                <p>추천 API 연결 오류: {rankingState.message}</p>
+              )}
+            </div>
+          )}
+
+          
+{rankingState.status === 'success' && (
+  <section className="rounded-xl border border-line-strong bg-white p-5">
+    <h2 className="mb-3 text-lg font-semibold text-accent-ink">
+      맞춤 추천 공고 TOP 3
+    </h2>
+
+    {rankingState.result.top3.length === 0 ? (
+      <div className="space-y-2 text-sm text-muted">
+        <p>현재 신청 가능한 맞춤 추천 공고가 없습니다.</p>
+        <p>
+          모집 마감 {rankingState.result.closed?.length ?? 0}건,
+          자격 미확인 {rankingState.result.unverified.length}건,
+          추가 확인 필요 {rankingState.result.needs_review.length}건
+        </p>
+        <p>
+          아래 공고 목록은 참고용이며 신청 가능 또는 자격 충족을 의미하지 않습니다.
+        </p>
+      </div>
+    ) : (
+      <div className="flex flex-col gap-3">
+        {rankingState.result.top3.map((notice, index) => (
+          <article
+            key={notice.id}
+            className="rounded-lg border border-line-strong p-4"
+          >
+            <p className="mb-1 text-sm font-semibold text-accent-ink">
+              추천 {index + 1}위
+            </p>
+
+            <h3 className="text-base font-semibold text-ink">
+              {notice.name}
+            </h3>
+
+            <p className="mt-1 text-sm text-muted">
+              추천 점수: {notice.recommendation_score == null
+                ? '계산 가능한 조건 없음'
+                : `${notice.recommendation_score}점`}
+            </p>
+
+            <ul className="mt-2 list-disc pl-5 text-sm text-muted">
+              {notice.recommendation_reasons.length > 0 ? (
+                notice.recommendation_reasons.map((reason, i) => (
+                  <li key={i}>{reason}</li>
+                ))
+              ) : (
+                <li>추천 이유를 확인할 수 없습니다.</li>
+              )}
+            </ul>
+
+            <p className="mt-2 text-sm text-muted">
+              접수 마감일: {notice.application_end ?? '미확인'}
+            </p>
+
+            {notice.notice_url && (
+              <a
+                href={notice.notice_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-2 inline-block text-sm font-semibold text-accent-ink underline"
+              >
+                공고문 원문 보기
+              </a>
+            )}
+          </article>
+        ))}
+      </div>
+    )}
+  </section>
+)}
+
 
           {status === 'loading' && <StateMessage variant="loading" bordered message="공고를 불러오고 있어요…" />}
 

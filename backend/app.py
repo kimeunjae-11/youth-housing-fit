@@ -1,6 +1,7 @@
 import json,os
 from wsgiref.simple_server import make_server,WSGIRequestHandler
 from service import judge,recommend,read
+from recommendation_rank import rank_notices
 
 ORIGINS={x.strip() for x in os.getenv('CORS_ORIGINS','https://youth-housing-fit.vercel.app,http://localhost:5173,http://localhost:3000').split(',') if x.strip()}
 def application(env,start_response):
@@ -16,7 +17,15 @@ def application(env,start_response):
     if method=='OPTIONS': return respond('200 OK',{})
     if method=='GET' and path=='/health': return respond('200 OK',dict(status='ok',data_as_of=read('housing.json')['data_as_of']))
     if method=='GET' and path=='/api/housing': return respond('200 OK',read('housing.json'))
-    routes={'/api/eligibility':judge,'/api/recommendations':recommend}
+    routes={'/api/eligibility':judge,
+            '/api/recommendations':recommend,
+              '/api/recommendation-preview': lambda p: rank_notices(
+                p['notices'],
+                p['judgments'],
+                p['preferences'],
+                p.get('weights')
+             ),
+    }
     if path not in routes: return respond('404 Not Found',dict(error='경로를 확인하세요'))
     if method!='POST': return respond('405 Method Not Allowed',dict(error='POST를 사용하세요'))
     if env.get('CONTENT_TYPE','').split(';')[0].strip()!='application/json': return respond('415 Unsupported Media Type',dict(error='application/json 필요'))
