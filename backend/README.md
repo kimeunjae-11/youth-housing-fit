@@ -1,5 +1,24 @@
 # 청년주거핏 백엔드
 
+## 7개 주택공급 정책 1차 추천
+
+기존 실행 명령인 `python3 app.py`로 정책 추천 API도 함께 실행합니다. 브라우저에서 `http://127.0.0.1:8000/demo`를 열면 나이·혼인·본인 및 세대 주택 소유 여부·주거 선호를 입력해 추천을 확인할 수 있습니다.
+
+- `POST /api/policy-recommendations`는 정책 후보 하나와 추천 이유, 추가 확인 조건 및 출처를 반환합니다.
+- `housing_recommender.py`는 `../data/youth_housing_policies.json`을 읽는 추천 모듈입니다.
+- `demo.html`은 같은 서버의 정책 추천 API를 호출합니다.
+- 요청 형식과 응답 상태는 [백엔드 API 문서](../docs/backend-api.md)의 정책 추천 항목을 참고하세요.
+
+실제 소득 기준표는 기본 배포물에 포함되어 있지 않습니다. 해당 공고의 기준표를 준비한 경우 서버 시작 시 연결합니다.
+
+```sh
+POLICY_INCOME_TABLE_FILE=/absolute/path/to/income_table.json python3 app.py
+```
+
+기준표는 기준명 → 가구원 수 문자열 → 100% 월액(원 단위 양의 정수)의 JSON 객체입니다. 기준명은 `urban_worker_previous_year_monthly_average`와 `national_median_income`을 사용합니다. 표나 입력 정보가 없으면 소득은 미확인으로 처리합니다. 기준표를 변경하면 서버를 재시작하세요.
+
+자산·차량가액·지역 조건의 공고별 수치 비교, 증빙 검증 및 전체 예외 적용은 추가 구현 대상입니다. 정책 데이터의 참고 자산 금액을 확정 판정에 사용하지 않습니다.
+
 팀 저장소 루트의 `backend/`, `data/`, `docs/` 구조를 전제로 합니다. frontend/design 파일은 포함하거나 수정하지 않았습니다.
 
 ## 실행

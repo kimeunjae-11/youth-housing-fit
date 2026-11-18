@@ -1,0 +1,713 @@
+{
+  "schema_version": "1.0.0",
+  "title": "청년주거핏 청년 주택공급 정책 데이터",
+  "compiled_on": "2026-11-17",
+  "scope": {
+    "directory_source_id": "myhome_index",
+    "requested_filters": {
+      "target": "청년",
+      "program_type": "주택공급",
+      "program_owner": "중앙정부"
+    },
+    "selection_basis": "사용자가 지정한 7개 사업과 마이홈 상세 안내·공고·공식 보충자료를 기준으로 작성. 동적 필터 결과는 독립적으로 재현하지 못함.",
+    "coverage": "청년이 검토할 수 있는 주요 공급 경로 중심"
+  },
+  "units": {
+    "currency": "KRW",
+    "income_percent": "기준소득 대비 백분율",
+    "age": "만 나이",
+    "area": "m²"
+  },
+  "matching": {
+    "intended_use": "청년주거핏에서 주택공급 후보 유형을 1차로 찾는 데 사용",
+    "null_meaning": "공고별 확인이 필요하거나 해당 경로에 일률적으로 입력할 값이 없음. 주변 필드와 공고를 함께 확인.",
+    "statuses": {
+      "potential_match": "입력된 일반조건에 부합해 공고 확인이 필요한 후보",
+      "needs_info": "사용자 입력 또는 공고 기준이 부족한 후보",
+      "condition_mismatch": "해당 경로에 명시된 일반조건과 입력값이 불일치"
+    },
+    "input_fields": {
+      "age_years": "공고일 기준 만 나이",
+      "married": "공고일 혼인 여부",
+      "is_student": "재학·입학·복학 여부",
+      "is_job_seeker": "졸업·중퇴일과 재직 여부 별도 확인",
+      "current_region_code": "주민등록 거주지",
+      "preferred_region_codes": "희망 공급지",
+      "household_size": "공고별 산정 방식 적용",
+      "dependent_count": "부양가족 수. 공고별 가점 확인",
+      "applicant_has_income": "본인 소득 유무",
+      "applicant_monthly_income_krw": "본인 월평균소득",
+      "household_monthly_income_krw": "세대 월평균소득",
+      "parents_monthly_income_krw": "부모 월평균소득 합계",
+      "household_head": "세대주 여부",
+      "applicant_owns_home": "본인 현재 주택 소유 여부",
+      "household_owns_home": "세대 현재 주택 소유 여부",
+      "applicant_ever_owned_home": "본인 과거 소유 여부",
+      "household_ever_owned_home": "세대 과거 소유 여부",
+      "total_assets_krw_by_scope": "본인·세대·본인과 부모·부모 각각의 해당 자산",
+      "real_estate_assets_krw": "공고상 부동산가액",
+      "owns_vehicle": "자동차 소유 여부",
+      "vehicle_value_krw": "공고상 자동차 인정가액",
+      "subscription_months": "청약통장 가입 개월",
+      "subscription_payment_count": "인정 납입 횟수",
+      "subscription_deposit_krw": "청약 예치금",
+      "income_tax_years": "인정 소득세 납부 연수",
+      "welfare_qualifications": "수급·차상위·한부모·자립준비 등 해당 사항",
+      "housing_goal": "임대·분양·임대 후 분양선택 선호"
+    },
+    "evaluation_notes": [
+      "소득 기준표는 공고의 적용연도와 가구원수로 조회한다. 기준 중위소득과 도시근로자 기준소득은 별도로 관리한다.",
+      "자산 상한이 비어 있거나 지원 경로에 예외가 있을 경우 공고 확인 전에는 확정 판정하지 않는다.",
+      "현재 거주지에 따른 신청 자격과 희망 지역에 따른 추천 순위를 각각 평가한다.",
+      "선택형은 임대 후 분양 선택 경로로 표시한다. 1차 정책 매칭 후 지역·전용면적·접수마감일은 개별 공고 단위로 조회한다."
+    ]
+  },
+  "sources": {
+    "myhome_index": {
+      "name": "마이홈 청년주거지원사업 검색",
+      "url": "https://www.myhome.go.kr/hws/portal/cont/selectYouthPolicyLocalHousWlfareBussView.do"
+    },
+    "happy_myhome": {
+      "name": "마이홈 행복주택",
+      "url": "https://www.myhome.go.kr/hws/portal/cont/selectHappyHouseView.do"
+    },
+    "happy_lh": {
+      "name": "LH청약플러스 행복주택 입주자격",
+      "url": "https://apply.lh.or.kr/lhapply/cm/cntnts/cntntsView.do?cntntsId=1201391&mi=1201663"
+    },
+    "happy_terms": {
+      "name": "LH청약플러스 행복주택 소개·2026 기준",
+      "url": "https://apply.lh.or.kr/lhapply/cm/cntnts/cntntsView.do?cntntsId=1201371&mi=1201662"
+    },
+    "jeonse_myhome": {
+      "name": "마이홈 전세임대",
+      "url": "https://www.myhome.go.kr/hws/portal/cont/selectCharterRentalHouseView.do"
+    },
+    "jeonse_lh": {
+      "name": "LH 청년 전세임대주택",
+      "url": "https://www.lh.or.kr/menu.es?mid=a10401020400"
+    },
+    "jeonse_notice": {
+      "name": "마이홈 2026 청년 전세임대 1순위 공고",
+      "url": "https://m.myhome.go.kr/hws/portal/sch/selectRsdtRcritNtcDetailView.do?pblancId=19631"
+    },
+    "purchase_lh": {
+      "name": "LH청약플러스 청년 매입임대",
+      "url": "https://apply.lh.or.kr/lhapply/cm/cntnts/cntntsView.do?cntntsId=201251"
+    },
+    "purchase_notice": {
+      "name": "마이홈 2026년 2차 인천·부천 청년 매입임대 공고",
+      "url": "https://m.myhome.go.kr/hws/portal/sch/selectRsdtRcritNtcDetailView.do?pblancId=19893"
+    },
+    "purchase_pdf": {
+      "name": "LH 2026년 청년 매입임대 공고문 예시",
+      "url": "https://www.lh.or.kr/boardDownload.es?bid=0033&list_no=731834&seq=1"
+    },
+    "integrated_myhome": {
+      "name": "마이홈 통합공공임대",
+      "url": "https://www.myhome.go.kr/hws/portal/cont/selectIntegratedPubRentalHouseView.do"
+    },
+    "rent_comparison": {
+      "name": "마이홈 임대주택 유형 비교",
+      "url": "https://www.myhome.go.kr/hws/portal/cont/selectContRentalHouseView.do"
+    },
+    "newhome_myhome": {
+      "name": "마이홈 뉴:홈 선택형 상세",
+      "url": "https://www.myhome.go.kr/hws/portal/cont/selectNewHomeChoiceTypeView.do"
+    },
+    "public_sale_myhome": {
+      "name": "마이홈 공공분양 유형별 입주자격",
+      "url": "https://www.myhome.go.kr/hws/portal/cont/selectPubSalesHousView.do"
+    },
+    "private_rent_schedule": {
+      "name": "민간임대주택에 관한 특별법 시행규칙 별표 1",
+      "url": "https://law.go.kr/LSW/flDownload.do?bylClsCd=110201&flSeq=159325699&gubun="
+    },
+    "private_rent_asset": {
+      "name": "민간임대주택에 관한 특별법 시행규칙 제14조의3",
+      "url": "https://law.go.kr/LSW/lsLinkCommonInfo.do?chrClsCd=010202&lspttninfSeq=148940"
+    },
+    "private_sale_myhome": {
+      "name": "마이홈 국토교통부 생애최초 특공 1인 가구 개편 자료",
+      "url": "https://www.myhome.go.kr/hws/portal/bbs/selectBoardPressDetailView.do?bbsId=BBST03&nttId=1786"
+    },
+    "private_sale_law": {
+      "name": "국가법령정보센터 주택공급에 관한 규칙 제43조",
+      "url": "https://www.law.go.kr/lsLinkCommonInfo.do?chrClsCd=010202&lsJoLnkSeq=1030378555"
+    },
+    "newhome_lh": {
+      "name": "LH청약플러스 6년 분양전환 공공임대 입주자격",
+      "url": "https://apply.lh.or.kr/lhapply/cm/cntnts/cntntsView.do?cntntsId=1111&mi=1224"
+    }
+  },
+  "policies": [
+    {
+      "policy_id": "happy_housing",
+      "name": "행복주택",
+      "target": "청년",
+      "program_type": "주택공급",
+      "program_owner_filter": "중앙정부",
+      "supply_type": "공공임대",
+      "recommendation_route": "rent",
+      "summary": "청년·대학생 등이 통학이나 출퇴근에 편리한 곳에 거주할 수 있도록 공급하는 공공임대주택.",
+      "tracks": [
+        {
+          "track_id": "youth",
+          "age": {
+            "min": 19,
+            "max": 39,
+            "unit": "만 나이",
+            "inclusive": true
+          },
+          "housing_ownership_scope": "applicant",
+          "married": false,
+          "income": {
+            "benchmark": "urban_worker_previous_year_monthly_average",
+            "scope": "household_if_household_head_else_applicant",
+            "max_percent": 100,
+            "max_percent_by_household_size": {
+              "1": 120,
+              "2": 110
+            }
+          },
+          "assets": {
+            "scope": "household_if_household_head_else_applicant",
+            "standard": "happy_housing_youth",
+            "threshold_krw": null,
+            "vehicle_threshold_krw": null
+          },
+          "subscription": {
+            "timing": "입주 전까지 가입 사실 증명이 필요한 청년 공고가 있으므로 공고 확인"
+          }
+        },
+        {
+          "track_id": "college_student",
+          "married": false,
+          "housing_ownership_scope": "applicant",
+          "entry_options_any": [
+            "대학 재학·입학·복학 예정",
+            "해당 교육기관 졸업·중퇴 후 2년 이내인 취업준비생"
+          ],
+          "income": {
+            "benchmark": "urban_worker_previous_year_monthly_average",
+            "scope": "applicant_and_parents",
+            "max_percent": 100,
+            "max_percent_by_household_size": {
+              "1": 120,
+              "2": 110
+            }
+          },
+          "assets": {
+            "scope": "applicant_only",
+            "standard": "happy_housing_student",
+            "threshold_krw": null,
+            "vehicle_threshold_krw": null
+          },
+          "vehicle_rule": "대학생 계층 공고의 자동차 미소유 요건 확인"
+        },
+        {
+          "track_id": "early_career",
+          "married": false,
+          "housing_ownership_scope": "applicant",
+          "paid_work_years_max": 5,
+          "entry_options_any": [
+            "소득 있는 업무에 종사",
+            "퇴직 후 1년 미만이며 구직급여 수급자격 인정",
+            "예술인"
+          ],
+          "inherits_income_assets_subscription_from": "youth"
+        }
+      ],
+      "terms": {
+        "market_rent_percent_range": [
+          60,
+          80
+        ],
+        "max_stay_years_youth_lh_guide": 10,
+        "renewal": "갱신 요건과 최초 계약기간은 공고 확인"
+      },
+      "notice_fields": [
+        "지역·학교·소득근거지 우선순위",
+        "청년·대학생별 총자산 및 차량가액 기준",
+        "청약통장 증명 시점",
+        "임대료·보증금·면적"
+      ],
+      "source_ids": [
+        "happy_myhome",
+        "happy_lh",
+        "happy_terms"
+      ]
+    },
+    {
+      "policy_id": "youth_jeonse_rental",
+      "name": "전세임대",
+      "target": "청년",
+      "program_type": "주택공급",
+      "program_owner_filter": "중앙정부",
+      "supply_type": "공공임대",
+      "recommendation_route": "rent",
+      "summary": "청년이 입주 가능 주택을 찾으면 사업자가 집주인과 전세계약을 맺고 청년에게 재임대한다.",
+      "tracks": [
+        {
+          "track_id": "youth",
+          "age": {
+            "min": 19,
+            "max": 39,
+            "unit": "만 나이",
+            "inclusive": true
+          },
+          "housing_ownership_scope": "applicant",
+          "married": false,
+          "entry_options_any": [
+            "공고일 기준 연령 범위 충족",
+            "대학생(입학·복학 예정 포함 여부는 공고 확인)",
+            "취업준비생(졸업·중퇴 시점 및 미취업 요건은 공고 확인)"
+          ],
+          "priority_tiers": [
+            {
+              "priority": 1,
+              "any_of": [
+                "생계·의료·주거급여 수급 가구",
+                "지원대상 한부모가족",
+                "차상위계층",
+                "일정 요건을 충족하는 자립준비청년 또는 청소년복지시설 퇴소청소년"
+              ],
+              "detail": "세부 인정 범위와 가구원 관계는 공고 확인"
+            },
+            {
+              "priority": 2,
+              "income": {
+                "benchmark": "urban_worker_previous_year_monthly_average",
+                "scope": "applicant_and_parents",
+                "max_percent": 100
+              },
+              "assets": {
+                "scope": "applicant_and_parents",
+                "standard": "national_public_rental",
+                "threshold_krw": null,
+                "vehicle_threshold_krw": null
+              }
+            },
+            {
+              "priority": 3,
+              "income": {
+                "benchmark": "urban_worker_previous_year_monthly_average",
+                "scope": "applicant_only",
+                "max_percent": 100
+              },
+              "assets": {
+                "scope": "applicant_only",
+                "standard": "happy_housing_youth",
+                "threshold_krw": null,
+                "vehicle_threshold_krw": null
+              }
+            }
+          ],
+          "age_applies_to": "age_based_entry_option_only"
+        }
+      ],
+      "terms": {
+        "lh_guide_single_person_support_cap_krw": {
+          "capital_region": 120000000,
+          "metropolitan_city_outside_capital_region": 95000000,
+          "other_region": 85000000
+        },
+        "initial_lease_years": 2,
+        "max_stay_years_if_renewal_eligible": 10,
+        "max_stay_years_if_married_after_move_in_and_renewal_eligible": 20
+      },
+      "notice_fields": [
+        "공고에서 모집하는 순위",
+        "인정되는 대학생·취업준비생 조건",
+        "가구원수별 소득표",
+        "지원 가능 지역·주택과 권리분석",
+        "보증금·월 임대료·전세지원 한도"
+      ],
+      "source_ids": [
+        "jeonse_myhome",
+        "jeonse_lh",
+        "jeonse_notice"
+      ]
+    },
+    {
+      "policy_id": "youth_purchase_rental",
+      "name": "매입임대",
+      "target": "청년",
+      "program_type": "주택공급",
+      "program_owner_filter": "중앙정부",
+      "supply_type": "공공임대",
+      "recommendation_route": "rent",
+      "summary": "공공사업자가 매입한 기존 주택을 청년에게 저렴하게 임대한다.",
+      "tracks": [
+        {
+          "track_id": "youth",
+          "age": {
+            "min": 19,
+            "max": 39,
+            "unit": "만 나이",
+            "inclusive": true
+          },
+          "housing_ownership_scope": "applicant",
+          "married": false,
+          "entry_options_any": [
+            "공고일 기준 연령 범위 충족",
+            "대학생(입학·복학 예정 포함 여부는 공고 확인)",
+            "취업준비생(졸업·중퇴 시점 및 미취업 요건은 공고 확인)"
+          ],
+          "priority_tiers": [
+            {
+              "priority": 1,
+              "any_of": [
+                "생계·의료·주거급여 수급 가구",
+                "지원대상 한부모가족",
+                "차상위계층"
+              ],
+              "detail": "세부 인정 범위와 가구원 관계는 공고 확인"
+            },
+            {
+              "priority": 2,
+              "income": {
+                "benchmark": "urban_worker_previous_year_monthly_average",
+                "scope": "applicant_and_parents",
+                "max_percent": 100
+              },
+              "assets": {
+                "scope": "applicant_and_parents",
+                "standard": "national_public_rental",
+                "threshold_krw": null,
+                "vehicle_threshold_krw": null
+              }
+            },
+            {
+              "priority": 3,
+              "income": {
+                "benchmark": "urban_worker_previous_year_monthly_average",
+                "scope": "applicant_only",
+                "max_percent": 100
+              },
+              "assets": {
+                "scope": "applicant_only",
+                "standard": "happy_housing_youth",
+                "threshold_krw": null,
+                "vehicle_threshold_krw": null
+              }
+            }
+          ],
+          "age_applies_to": "age_based_entry_option_only"
+        }
+      ],
+      "terms": {
+        "market_rent_percent_range": [
+          40,
+          50
+        ],
+        "lh_notice_example": {
+          "notice_id": "19893",
+          "notice_date": "2026-03-26",
+          "regions": [
+            "인천",
+            "부천"
+          ],
+          "initial_lease_years": 2,
+          "max_stay_years_if_renewal_eligible": 10,
+          "max_stay_years_if_married_after_move_in_and_renewal_eligible": 20,
+          "example_only": true
+        }
+      },
+      "notice_fields": [
+        "선택 가능한 공급주택",
+        "공고별 모집순위",
+        "소득·자산 조사 대상",
+        "순위별 보증금·임대료",
+        "접수 일정"
+      ],
+      "source_ids": [
+        "purchase_lh",
+        "purchase_notice",
+        "purchase_pdf"
+      ]
+    },
+    {
+      "policy_id": "integrated_public_rental",
+      "name": "통합공공임대",
+      "target": "청년",
+      "program_type": "주택공급",
+      "program_owner_filter": "중앙정부",
+      "supply_type": "공공임대",
+      "recommendation_route": "rent",
+      "summary": "공공임대를 통합한 유형으로 소득 수준에 따라 임대조건이 달라진다.",
+      "tracks": [
+        {
+          "track_id": "youth_general",
+          "age": {
+            "min": 18,
+            "max": 39,
+            "unit": "만 나이",
+            "inclusive": true
+          },
+          "housing_ownership_scope": "applicant",
+          "married": false,
+          "income": {
+            "benchmark": "national_median_income",
+            "scope": "household_if_head_with_members_else_applicant",
+            "max_percent": 150,
+            "max_percent_by_household_size": {
+              "1": 170,
+              "2": 160
+            }
+          },
+          "assets": {
+            "scope": "notice_defined",
+            "standard": "integrated_public_rental",
+            "threshold_krw": null,
+            "vehicle_threshold_krw": null
+          },
+          "selection": "추첨"
+        },
+        {
+          "track_id": "youth_priority",
+          "age": {
+            "min": 18,
+            "max": 39,
+            "unit": "만 나이",
+            "inclusive": true
+          },
+          "housing_ownership_scope": "applicant",
+          "married": false,
+          "entry_options_any": [
+            "공고일 기준 연령 범위 충족",
+            "공고에 규정된 아동복지시설 퇴소·가정위탁 종료 관련 자격",
+            "공고에 규정된 청소년쉼터 퇴소 관련 자격"
+          ],
+          "income": {
+            "benchmark": "national_median_income",
+            "scope": "household_if_head_with_members_else_applicant",
+            "max_percent": 100,
+            "max_percent_by_household_size": {
+              "1": 120,
+              "2": 110
+            }
+          },
+          "assets": {
+            "scope": "notice_defined",
+            "standard": "integrated_public_rental",
+            "threshold_krw": null,
+            "vehicle_threshold_krw": null
+          },
+          "selection": "우선공급 배점과 동점자 처리 방식은 공고 확인",
+          "age_applies_to": "age_based_entry_option_only"
+        }
+      ],
+      "terms": {
+        "market_rent_percent_range": [
+          35,
+          90
+        ],
+        "max_lease_years_guide": 30
+      },
+      "notice_fields": [
+        "우선공급 여부 및 배점",
+        "해당년도 기준 중위소득표",
+        "총자산·자동차가액 상한",
+        "거주지·청약통장 납입횟수 등의 배점",
+        "실제 임대료·면적"
+      ],
+      "source_ids": [
+        "integrated_myhome",
+        "rent_comparison"
+      ]
+    },
+    {
+      "policy_id": "newhome_choice",
+      "name": "(뉴:홈)공공분양(선택형)",
+      "target": "청년",
+      "program_type": "주택공급",
+      "program_owner_filter": "중앙정부",
+      "supply_type": "공공분양",
+      "recommendation_route": "rent_then_optional_purchase",
+      "summary": "공공임대로 먼저 거주한 뒤 분양전환 여부를 선택할 수 있는 유형.",
+      "tracks": [
+        {
+          "track_id": "youth_special",
+          "age": {
+            "min": 19,
+            "max": 39,
+            "unit": "만 나이",
+            "inclusive": true
+          },
+          "housing_ownership_scope": "applicant",
+          "married": false,
+          "applicant_prior_home_ownership": false,
+          "income": {
+            "benchmark": "urban_worker_previous_year_monthly_average",
+            "scope": "applicant_only",
+            "max_percent": 140
+          },
+          "assets": {
+            "scope": "applicant_and_parents_separately",
+            "standard": "newhome_choice_youth",
+            "threshold_krw": null,
+            "vehicle_threshold_krw": null,
+            "guide_amounts_krw": {
+              "applicant": 270000000,
+              "parents": 1011000000
+            },
+            "amounts_scope": "마이홈 상세 안내 참고값. 요약 표의 본인 금액 단위 표기와 차이가 있어 실제 공고로 재확인. LH 가이드 참고값과 마이홈 안내값도 서로 다르므로 두 값은 자동 판정에 사용하지 않는다.",
+            "lh_guide_reference_krw": {
+              "applicant": 276000000,
+              "parents": 1035000000
+            }
+          },
+          "subscription": {
+            "min_months": 6,
+            "min_recognized_payments": 6
+          },
+          "selection": {
+            "guide_method": "우선공급·잔여공급에서 가점순, 동점은 추첨. 실제 배정과 가점은 공고 확인.",
+            "priority_factors": [
+              "본인 월평균소득",
+              "해당 시·도 연속 거주기간",
+              "청약통장 납입횟수"
+            ],
+            "remaining_additional_factor": "근로기간 소득세 납부 이력"
+          }
+        }
+      ],
+      "terms": {
+        "rental_period_before_conversion_choice_years": 6,
+        "purchase_optional": true
+      },
+      "notice_fields": [
+        "거주 가능 지역과 지역우선 기준",
+        "부모 자산 검증 범위와 해당 공고 기준액",
+        "임대보증금·월 임대료",
+        "분양전환 조건·가격 산정방식",
+        "청년 특별공급 순위·배점"
+      ],
+      "source_ids": [
+        "newhome_myhome",
+        "public_sale_myhome",
+        "newhome_lh"
+      ]
+    },
+    {
+      "policy_id": "public_supported_private_rental",
+      "name": "공공지원민간임대",
+      "target": "청년",
+      "program_type": "주택공급",
+      "program_owner_filter": "중앙정부",
+      "supply_type": "민간임대",
+      "recommendation_route": "rent",
+      "summary": "민간 임대사업자가 공공 지원을 받아 공급하며 일반공급과 청년 등 특별공급을 운영한다.",
+      "tracks": [
+        {
+          "track_id": "youth_special",
+          "age": {
+            "min": 19,
+            "max": 39,
+            "unit": "만 나이",
+            "inclusive": true
+          },
+          "housing_ownership_scope": "applicant",
+          "married": false,
+          "income_options": [
+            {
+              "when": "applicant_has_income",
+              "benchmark": "urban_worker_previous_year_monthly_average",
+              "scope": "household",
+              "max_percent": 120
+            },
+            {
+              "when": "applicant_has_no_income",
+              "benchmark": "urban_worker_previous_year_monthly_average",
+              "scope": "parents_only",
+              "max_percent": 120
+            }
+          ],
+          "assets": {
+            "scope": "notice_defined",
+            "standard": "operator_and_local_authority_may_set_separate_limits",
+            "threshold_krw": null,
+            "vehicle_threshold_krw": null
+          }
+        },
+        {
+          "track_id": "general",
+          "housing_ownership_scope": "household",
+          "age": null,
+          "income": null,
+          "note": "별표 1의 일반공급 기본 요건은 무주택세대구성원. 단지 공고 세부요건 확인."
+        }
+      ],
+      "terms": {
+        "provider": "민간 임대사업자",
+        "rent_and_duration": "공고별 보증금·월 임대료·의무임대기간 확인"
+      },
+      "notice_fields": [
+        "특별공급 모집 여부",
+        "공급단지 및 계약기간",
+        "소득 산정 가구원 범위",
+        "사업자별 부동산·자동차 기준",
+        "신청처와 접수일"
+      ],
+      "source_ids": [
+        "myhome_index",
+        "private_rent_schedule",
+        "private_rent_asset"
+      ]
+    },
+    {
+      "policy_id": "private_sale_first_time",
+      "name": "민간분양(생애최초 특별공급)",
+      "target": "청년",
+      "program_type": "주택공급",
+      "program_owner_filter": "중앙정부",
+      "supply_type": "민간분양",
+      "recommendation_route": "purchase",
+      "summary": "생애 처음 주택을 구입하는 세대를 대상으로 하는 민영주택 청약 유형. 청년 이용 가능 여부는 생애최초·청약 등 공고 요건으로 판단한다.",
+      "tracks": [
+        {
+          "track_id": "first_time_special",
+          "age": null,
+          "housing_ownership_scope": "household",
+          "household_prior_home_ownership": false,
+          "prior_ownership_exception": "배우자의 혼인 전 주택 소유 이력 등 법령상 특례를 공고에서 확인",
+          "subscription": {
+            "required_grade": "민영주택 1순위",
+            "minimum_deposit_krw": null,
+            "detail": "지역·면적별 예치금과 가입기간, 세대주·당첨이력 요건 확인"
+          },
+          "tax": {
+            "min_qualifying_years": 5,
+            "detail": "근로·사업소득 관련 소득세 납부 이력과 공고일 기준 근로·사업 상태 또는 최근 납부 요건 확인"
+          },
+          "income": {
+            "benchmark": "urban_worker_previous_year_monthly_average",
+            "scope": "household",
+            "max_percent": 160,
+            "above_threshold_path": "일부 추첨 경로는 부동산가액 기준 충족 시 검토 가능"
+          },
+          "single_person_path": {
+            "max_exclusive_area_m2_for_single_head_or_nonmember_on_register": 60,
+            "detail": "혼인·자녀 요건에 해당하지 않는 신청자의 추첨 경로와 주민등록상 세대구성별 면적 제한을 공고에서 확인"
+          }
+        }
+      ],
+      "terms": {
+        "provider": "민영주택 사업주체",
+        "sale_price": "단지·주택형별 공고"
+      },
+      "notice_fields": [
+        "전용면적·지역 우선공급",
+        "1인 신청 경로와 세대원 구분",
+        "160% 초과 경로의 부동산가액 상한",
+        "특별공급·재당첨 제한",
+        "분양가·계약금·접수일"
+      ],
+      "source_ids": [
+        "private_sale_myhome",
+        "private_sale_law"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="ko">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>청년주거핏 · 추천 테스트</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #f4f7f5; color: #182a21; font: 1rem/1.6 system-ui, sans-serif; }
+  main { width: min(42rem, 100% - 2rem); margin: 3rem auto; }
+  h1 { margin: 0 0 1.4rem; font-size: 1.9rem; }
+  form, .result { padding: 1.5rem; border: 1px solid #d7e2da; border-radius: .85rem; background: white; }
+  .fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: 1rem; }
+  label { display: grid; gap: .3rem; font-weight: 600; }
+  input, select, button { font: inherit; border-radius: .4rem; padding: .5rem .65rem; }
+  input, select { border: 1px solid #83988b; background: white; color: inherit; width: 100%; }
+  button { margin-top: 1.2rem; border: 0; background: #175c3c; color: white; font-weight: 650; cursor: pointer; }
+  button:disabled { opacity: .65; cursor: wait; }
+  .result h2, .result p:first-child { margin-top: 0; }
+</style>
+<main>
+  <h1>청년주거핏 정책 추천</h1>
+  <form id="profile">
+    <div class="fields">
+      <label>만 나이 <input name="age_years" type="number" min="0" required></label>
+      <label>혼인 여부
+        <select name="married" required><option value="">선택</option><option value="false">미혼</option><option value="true">기혼</option></select>
+      </label>
+      <label>본인 주택 소유
+        <select name="applicant_owns_home" required><option value="">선택</option><option value="false">없음</option><option value="true">있음</option></select>
+      </label>
+      <label>세대 주택 소유
+        <select name="household_owns_home"><option value="">모름 / 미입력</option><option value="false">없음</option><option value="true">있음</option></select>
+      </label>
+      <label>희망 주거 방식
+        <select name="housing_goal"><option value="any">전체</option><option value="rent">임대</option><option value="purchase">분양</option><option value="rent_then_optional_purchase">임대 후 분양 선택</option></select>
+      </label>
+      <label>선호 임대 유형
+        <select name="rental_preference"><option value="">선호 없음</option><option value="public_complex">공공임대 단지</option><option value="find_jeonse">직접 찾은 전셋집</option><option value="existing_public_home">공공기관 매입 주택</option><option value="private_rental">민간임대</option></select>
+      </label>
+    </div>
+    <button type="submit">추천 받기</button>
+  </form>
+  <p id="status" role="status"></p>
+  <section aria-label="추천 결과" id="result" class="result" hidden></section>
+</main>
+<script>
+  const form = document.querySelector("#profile");
+  const result = document.querySelector("#result");
+  const status = document.querySelector("#status");
+  const submit = form.querySelector("button");
+
+  function append(tag, value, parent = result) {
+    const element = document.createElement(tag);
+    element.textContent = value;
+    parent.append(element);
+    return element;
+  }
+
+  function showList(title, items) {
+    if (!items.length) return;
+    append("h3", title);
+    const list = append("ul", "");
+    items.forEach(item => append("li", item, list));
+  }
+
+  form.addEventListener("submit", async event => {
+    event.preventDefault();
+    const payload = Object.fromEntries(
+      [...new FormData(form)].filter(([, value]) => value !== "")
+    );
+    payload.age_years = Number(payload.age_years);
+    for (const key of ["married", "applicant_owns_home", "household_owns_home"]) {
+      if (key in payload) payload[key] = payload[key] === "true";
+    }
+    submit.disabled = true;
+    status.textContent = "추천을 확인하고 있어요.";
+    result.hidden = true;
+    result.replaceChildren();
+    try {
+      const response = await fetch("/api/policy-recommendations", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(payload)
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "추천 요청을 처리하지 못했어요.");
+      status.textContent = data.message;
+      const recommendation = data.recommendation;
+      if (!recommendation) return;
+      append("h2", recommendation.name);
+      append("p", recommendation.summary);
+      showList("추천 이유", recommendation.reasons);
+      showList("추가로 확인할 조건", recommendation.to_verify);
+      result.hidden = false;
+    } catch (error) {
+      status.textContent = error.message || "서버에 연결하지 못했어요.";
+    } finally {
+      submit.disabled = false;
+    }
+  });
+</script>
+</html>
