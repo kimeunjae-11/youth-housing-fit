@@ -1,5 +1,64 @@
 # 백엔드 API 약속
 
+## 7개 정책 1차 추천 API
+
+`POST /api/policy-recommendations`는 정책 후보 하나를 반환합니다. 기존 `/api/recommendations`는 주택 공고 목록을 탐색합니다. 브라우저 테스트 화면은 같은 서버의 `GET /demo`로 접속합니다. HEAD /demo도 지원합니다.
+
+```json
+{
+  "age_years": 23,
+  "married": false,
+  "applicant_owns_home": false,
+  "housing_goal": "rent",
+  "rental_preference": "existing_public_home"
+}
+```
+
+개별 필드는 선택 입력이며 생략·null은 미확인으로 처리합니다. 해당 경로의 본인 또는 세대 무주택 여부가 확인되어야 후보에 포함됩니다. 빈 객체는 status=no_recommendation, recommendation=null을 반환합니다. 금액은 원 단위 정수입니다.
+
+| 입력 필드 | 타입 | 의미 |
+| --- | --- | --- |
+| age_years | integer | 공고일 만 나이, 0 이상 |
+| married | boolean | 혼인 여부 |
+| applicant_owns_home / household_owns_home | boolean | 본인 / 세대 현재 주택 소유 |
+| applicant_ever_owned_home / household_ever_owned_home | boolean | 본인 / 세대 과거 소유 이력 |
+| household_head | boolean | 세대주 여부 |
+| is_student / is_job_seeker | boolean | 공고상 대학생 / 취업준비생 자격 |
+| early_career_status / paid_work_years | boolean / integer | 사회초년생 활동 요건 / 소득 업무 종사 연수 |
+| care_leaver / youth_shelter_leaver | boolean | 통합공공임대 대체 경로 관련 자격 |
+| applicant_monthly_income_krw / parents_monthly_income_krw / household_monthly_income_krw | integer | 본인 / 부모 합계 / 세대 월소득 |
+| household_size / applicant_and_parents_size / parents_size | integer | 각 소득 심사 범위의 인원수, 1 이상 |
+| has_subscription | boolean | 청약통장 보유 |
+| subscription_months / subscription_payment_count | integer | 가입 개월 / 인정 납입 횟수 |
+| private_subscription_first_rank | boolean | 해당 민영주택 공고의 청약 1순위 |
+| income_tax_years | integer | 인정 납세 연수 |
+| has_child / first_time_area_limit_applies | boolean | 자녀 여부 / 1인 생애최초 면적 제한 적용 |
+| preferred_exclusive_area_m2 | integer | 전용면적 |
+| owns_vehicle / vehicle_value_krw | boolean / integer | 소유 여부 / 가액. 현재 가액 상한 비교는 미구현 |
+| welfare_qualifications | string[] | 복지 자격 코드 배열 |
+
+`housing_goal`은 `any`(또는 생략), `rent`, `purchase`, `rent_then_optional_purchase`입니다. 선택형은 마지막 경로, purchase는 민간분양 생애최초 경로를 검토합니다.
+
+`rental_preference`는 `public_complex`(행복주택·통합공공임대), `find_jeonse`(전세임대), `existing_public_home`(매입임대), `private_rental`(공공지원민간임대)이며 생략할 수 있습니다.
+
+복지 코드는 `benefit_household`, `supported_single_parent`, `near_poverty`, `care_leaver`, `youth_shelter_leaver`입니다. 퇴소 자격 배열 코드는 전세임대 1순위, 별도 boolean은 통합공공임대 대체 경로에 사용합니다.
+
+### 정책 추천 응답
+
+- `status`는 `needs_info`, `potential_match`, `no_recommendation` 중 하나입니다.
+- `recommendation`은 정책 객체 하나 또는 null입니다.
+- 정책 객체에 `policy_id`, `name`, `supply_type`, `route`, `track_id`, `priority`, `summary`, `reasons`, `to_verify`, `notice_checks`, `sources`를 포함합니다.
+- `reasons`는 추천 근거, `to_verify`는 평가 중 미확인 조건, `notice_checks`는 공고별 확인 항목입니다. sources 원소는 name과 url입니다.
+- `message`는 안내입니다. 추천 후보에도 실제 공고 확인 안내를 표시하세요.
+
+불충족 경로를 제외한 뒤 신청 경로 확인, 임대 선호, 1순위 복지, 소득 충족, 충족 조건 수, 적은 미확인 수, 정책 JSON 순서, 순위 번호 순으로 비교합니다. 공식 당첨 순위는 해당 공고로 확인합니다.
+
+`POLICY_INCOME_TABLE_FILE`로 공고 기준표를 연결합니다. 미설정 시 소득은 미확인입니다. 실제 공고별 지역·자산·차량 상한은 현재 확인 항목으로 안내합니다. 실행 설정은 backend/README.md를 참고하세요.
+
+팀 서버 공통 오류 규칙을 적용합니다. 입력·JSON 오류는 422, Content-Type은 415, 본문 크기는 413, 경로는 404, 메서드는 405입니다. 요청 상한은 16KB입니다. 예전 독립 서버의 `/recommend`를 호출하던 코드는 새 주소와 상태코드로 변경해야 합니다.
+
+## 기존 행복주택 API
+
 프론트 코드를 아직 전달받지 않아 다음 형식은 제안 계약입니다. 담당자와 확인 후 맞춰야 합니다.
 
 ## 경로

@@ -1,6 +1,14 @@
 import json,os
 from wsgiref.simple_server import make_server,WSGIRequestHandler
 from service import judge,recommend,read
+from pathlib import Path
+from housing_recommender import recommend as recommend_policy, load_income_tables
+
+POLICY_INCOME_TABLES = load_income_tables(os.getenv('POLICY_INCOME_TABLE_FILE'))
+
+def policy_recommendations(profile):
+    return recommend_policy(profile, POLICY_INCOME_TABLES)
+
 
 ORIGINS={x.strip() for x in os.getenv('CORS_ORIGINS','https://youth-housing-fit.vercel.app,http://localhost:5173,http://localhost:3000').split(',') if x.strip()}
 def application(env,start_response):
@@ -14,9 +22,14 @@ def application(env,start_response):
         return [data]
     path=env.get('PATH_INFO'); method=env.get('REQUEST_METHOD')
     if method=='OPTIONS': return respond('200 OK',{})
+    if method in ('GET','HEAD') and path=='/demo':
+        body=Path(__file__).with_name('demo.html').read_bytes()
+        html_headers=[(key,value) for key,value in headers if key!='Content-Type']
+        start_response('200 OK',html_headers+[('Content-Type','text/html; charset=utf-8'),('Content-Length',str(len(body)))])
+        return [body] if method=='GET' else []
     if method=='GET' and path=='/health': return respond('200 OK',dict(status='ok',data_as_of=read('housing.json')['data_as_of']))
     if method=='GET' and path=='/api/housing': return respond('200 OK',read('housing.json'))
-    routes={'/api/eligibility':judge,'/api/recommendations':recommend}
+    routes={'/api/eligibility':judge,'/api/recommendations':recommend,'/api/policy-recommendations':policy_recommendations}
     if path not in routes: return respond('404 Not Found',dict(error='경로를 확인하세요'))
     if method!='POST': return respond('405 Method Not Allowed',dict(error='POST를 사용하세요'))
     if env.get('CONTENT_TYPE','').split(';')[0].strip()!='application/json': return respond('415 Unsupported Media Type',dict(error='application/json 필요'))
