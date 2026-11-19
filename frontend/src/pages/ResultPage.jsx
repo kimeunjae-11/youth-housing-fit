@@ -6,6 +6,7 @@ import StateMessage, { softButtonClass } from '../components/StateMessage.jsx'
 import StepTracker from '../components/StepTracker.jsx'
 import EligibilityTable from '../components/result/EligibilityTable.jsx'
 import { formatDate } from '../utils/format.js'
+import PolicyRecommendation from '../components/result/PolicyRecommendation.jsx'
 
 const TYPE_LABELS = {
   'happy-youth': '행복주택 청년계층',
@@ -148,6 +149,7 @@ function ResultContent({ condition }) {
             {status === 'success' && !isEmpty && (
               <>
                 <EligibilityTable items={data.items} />
+                <PolicyRecommendation condition={condition} />
 
                 {failedItems.length > 0 && (
                   <div
