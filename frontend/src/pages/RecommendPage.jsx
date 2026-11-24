@@ -4,6 +4,7 @@ import { fetchRecommendations, fetchRankedRecommendations } from '../api/recomme
 import StateMessage, { softButtonClass } from '../components/StateMessage.jsx'
 import StepTracker from '../components/StepTracker.jsx'
 import ListingCard from '../components/recommend/ListingCard.jsx'
+import TopRecommendations from '../components/recommend/TopRecommendations.jsx'
 import { REGION_OPTIONS } from '../constants/condition.js'
 import { formatDate } from '../utils/format.js'
 import { buildRankingNotices } from '../utils/rankingNotices.js'
@@ -39,7 +40,7 @@ const SORT_OPTIONS = [
   },
 ]
 
-function getHeading(status, count, message) {
+function getHeading(status, count) {
   if (status === 'loading') {
     return { title: '맞는 공고를 찾고 있어요', subtitle: '입력하신 조건으로 오산시 공고를 확인하는 중입니다.' }
   }
@@ -51,8 +52,8 @@ function getHeading(status, count, message) {
   }
   // 자격 판정과 별개인 지역·월세 탐색 결과다. '신청 가능'으로 보이는 문구는 쓰지 않는다.
   return {
-    title: '참고용 공고를 찾았어요',
-    subtitle: message || '지역·월세에 맞는 참고용 목록이에요. 자격 충족이나 현재 신청 가능을 뜻하지 않아요.',
+    title: '추천 결과를 확인하세요',
+    subtitle: '맞춤 추천 TOP 3는 자격 충족·접수 중인 공고만 골랐고, 참고용 공고는 지역·월세로만 찾은 목록이에요.',
   }
 }
 
@@ -81,45 +82,31 @@ function RecommendContent({ condition }) {
   const { status, data, message } = state
   const items = data?.items
 
-  // 개발 단계: 기존 참고용 공고를 추천 알고리즘에 전달해 연결 확인
-  const [rankingState, setRankingState] = useState({
-    status: 'idle',
-  })
+  // 맞춤 추천 TOP 3. 참고용 공고 목록을 받은 뒤 추천 점수 API에 넘긴다.
+  // TODO: 공고별 자격판정 API가 나오면 judgments 를 채우고, 엑셀 공고가 연결되면 notices 입력을 바꾼다.
+  const [rankingState, setRankingState] = useState({ status: 'loading' })
+  const [rankingAttempt, setRankingAttempt] = useState(0)
+  const rankingWeights = useMemo(() => buildRankingInput(condition).weights, [condition])
 
   useEffect(() => {
     if (!items) return
-
     let cancelled = false
-
-    const notices = buildRankingNotices(items)
-    
-
-    // 공고별 자격판정 결과는 아직 연동되지 않음
-    const judgments = {}
-
-    setRankingState({ status: 'loading' })
-
-    fetchRankedRecommendations(notices, judgments, condition)
+    fetchRankedRecommendations(buildRankingNotices(items), {}, condition)
       .then((result) => {
-        if (!cancelled) {
-          setRankingState({ status: 'success', result })
-        }
+        if (!cancelled) setRankingState({ status: 'success', result })
       })
       .catch((error) => {
-        if (!cancelled) {
-          setRankingState({
-            status: 'error',
-            message: error?.message,
-          })
-        }
+        if (!cancelled) setRankingState({ status: 'error', message: error?.message })
       })
-
     return () => {
       cancelled = true
     }
-  }, [items, condition])
+  }, [items, condition, rankingAttempt])
 
-
+  const retryRanking = () => {
+    setRankingState({ status: 'loading' })
+    setRankingAttempt((count) => count + 1)
+  }
 
   const sortedItems = useMemo(() => {
     if (!items) return []
@@ -144,7 +131,36 @@ function RecommendContent({ condition }) {
   }
   const goBackToCondition = () => navigate('/condition', { state: { condition } })
 
-  const { title, subtitle } = getHeading(status, items?.length, data?.message)
+  const sortSelect = (
+    <div className="relative">
+      <span
+        className="material-symbols-outlined pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[16px] text-secondary"
+        aria-hidden="true"
+      >
+        sort
+      </span>
+      <select
+        aria-label="정렬 기준"
+        value={sortKey}
+        onChange={(event) => setSortKey(event.target.value)}
+        className="min-h-[44px] cursor-pointer appearance-none rounded-lg border border-line-strong bg-white py-1.5 pl-9 pr-9 text-[14px] font-medium text-ink transition-colors hover:bg-surface focus:border-accent-ink focus:outline-none focus:ring-2 focus:ring-accent/40"
+      >
+        {SORT_OPTIONS.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+      <span
+        className="material-symbols-outlined pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[16px] text-secondary"
+        aria-hidden="true"
+      >
+        expand_more
+      </span>
+    </div>
+  )
+
+  const { title, subtitle } = getHeading(status, items?.length)
   const regionLabel = REGION_OPTIONS.find((option) => option.value === condition.region)?.label
 
   return (
@@ -184,146 +200,12 @@ function RecommendContent({ condition }) {
                 </span>
                 조건 바꾸기
               </button>
-              {status === 'success' && items.length > 0 && (
-                <div className="relative">
-                  <span
-                    className="material-symbols-outlined pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[16px] text-secondary"
-                    aria-hidden="true"
-                  >
-                    sort
-                  </span>
-                  <select
-                    aria-label="정렬 기준"
-                    value={sortKey}
-                    onChange={(event) => setSortKey(event.target.value)}
-                    className="min-h-[44px] cursor-pointer appearance-none rounded-lg border border-line-strong bg-white py-1.5 pl-9 pr-9 text-[14px] font-medium text-ink transition-colors hover:bg-surface focus:border-accent-ink focus:outline-none focus:ring-2 focus:ring-accent/40"
-                  >
-                    {SORT_OPTIONS.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-                  <span
-                    className="material-symbols-outlined pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[16px] text-secondary"
-                    aria-hidden="true"
-                  >
-                    expand_more
-                  </span>
-                </div>
-              )}
             </div>
           </div>
           
-          {/* 개발 환경에서만 추천 API 연결 상태 표시 */}
-          {import.meta.env.DEV && (
-            <div className="rounded-lg border border-line-strong bg-white p-4 text-[13px] text-muted">
-              <p className="mb-2 font-semibold text-ink">
-                추천 알고리즘 연결 확인 (개발용)
-              </p>
-
-              {rankingState.status === 'loading' && (
-                <p>추천 API 호출 중...</p>
-              )}
-
-              {rankingState.status === 'success' && (
-                <div className="space-y-1">
-                  <p>추천 API 연결 성공</p>
-                  <p>
-                    적용된 가중치: {JSON.stringify(buildRankingInput(condition).weights)}
-                  </p>
-                  <p>
-                    자격 미확인 공고: {rankingState.result.unverified.length}건
-                  </p>
-                  <p>
-                    추천 TOP 3: {rankingState.result.top3.length}건
-                  </p>
-                  <p>
-                    모집 마감 공고: {rankingState.result.closed?.length ?? 0}건
-                  </p>
-                  <p>
-                    현재는 공고별 자격판정 결과가 없어 추천 대상을 확정하지 않습니다.
-                  </p>
-                </div>
-              )}
-
-              {rankingState.status === 'error' && (
-                <p>추천 API 연결 오류: {rankingState.message}</p>
-              )}
-            </div>
+          {status === 'success' && items.length > 0 && (
+            <TopRecommendations state={rankingState} weights={rankingWeights} onRetry={retryRanking} />
           )}
-
-          
-{rankingState.status === 'success' && (
-  <section className="rounded-xl border border-line-strong bg-white p-5">
-    <h2 className="mb-3 text-lg font-semibold text-accent-ink">
-      맞춤 추천 공고 TOP 3
-    </h2>
-
-    {rankingState.result.top3.length === 0 ? (
-      <div className="space-y-2 text-sm text-muted">
-        <p>현재 신청 가능한 맞춤 추천 공고가 없습니다.</p>
-        <p>
-          모집 마감 {rankingState.result.closed?.length ?? 0}건,
-          자격 미확인 {rankingState.result.unverified.length}건,
-          추가 확인 필요 {rankingState.result.needs_review.length}건
-        </p>
-        <p>
-          아래 공고 목록은 참고용이며 신청 가능 또는 자격 충족을 의미하지 않습니다.
-        </p>
-      </div>
-    ) : (
-      <div className="flex flex-col gap-3">
-        {rankingState.result.top3.map((notice, index) => (
-          <article
-            key={notice.id}
-            className="rounded-lg border border-line-strong p-4"
-          >
-            <p className="mb-1 text-sm font-semibold text-accent-ink">
-              추천 {index + 1}위
-            </p>
-
-            <h3 className="text-base font-semibold text-ink">
-              {notice.name}
-            </h3>
-
-            <p className="mt-1 text-sm text-muted">
-              추천 점수: {notice.recommendation_score == null
-                ? '계산 가능한 조건 없음'
-                : `${notice.recommendation_score}점`}
-            </p>
-
-            <ul className="mt-2 list-disc pl-5 text-sm text-muted">
-              {notice.recommendation_reasons.length > 0 ? (
-                notice.recommendation_reasons.map((reason, i) => (
-                  <li key={i}>{reason}</li>
-                ))
-              ) : (
-                <li>추천 이유를 확인할 수 없습니다.</li>
-              )}
-            </ul>
-
-            <p className="mt-2 text-sm text-muted">
-              접수 마감일: {notice.application_end ?? '미확인'}
-            </p>
-
-            {notice.notice_url && (
-              <a
-                href={notice.notice_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-2 inline-block text-sm font-semibold text-accent-ink underline"
-              >
-                공고문 원문 보기
-              </a>
-            )}
-          </article>
-        ))}
-      </div>
-    )}
-  </section>
-)}
-
 
           {status === 'loading' && <StateMessage variant="loading" bordered message="공고를 불러오고 있어요…" />}
 
@@ -358,9 +240,13 @@ function RecommendContent({ condition }) {
 
           {status === 'success' && items.length > 0 && (
             <>
-              <p className="sr-only" role="status">
-                참고용 공고 {items.length}건
-              </p>
+              <div className="mt-3 flex flex-wrap items-baseline justify-between gap-x-3 px-1">
+                <h2 className="text-lg font-semibold text-accent-ink" role="status">
+                  참고용 공고 {items.length}건
+                </h2>
+                {sortSelect}
+              </div>
+              <p className="-mt-1 px-1 text-[13px] text-muted">지역·월세만 맞춘 목록이라 자격 충족을 뜻하지 않아요</p>
               {commonCautions.length > 0 && (
                 <ul className="list-disc space-y-0.5 rounded-lg bg-surface-container-low px-4 py-3 pl-8 text-[13px] text-muted">
                   {commonCautions.map((caution) => (

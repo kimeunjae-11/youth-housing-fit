@@ -149,7 +149,6 @@ function ResultContent({ condition }) {
             {status === 'success' && !isEmpty && (
               <>
                 <EligibilityTable items={data.items} />
-                <PolicyRecommendation condition={condition} />
 
                 {failedItems.length > 0 && (
                   <div
@@ -190,13 +189,15 @@ function ResultContent({ condition }) {
                     </ul>
                   </div>
                 )}
+
+                <PolicyRecommendation condition={condition} />
               </>
             )}
 
             <div className="flex flex-col gap-2 border-t border-line-soft pt-3">
               {status === 'success' && !isEmpty && data.status === 'not_met' && (
                 <p className="text-[14px] text-muted">
-                  기준에 맞지 않는 항목이 있으면 맞춤 주택을 볼 수 없어요. 조건을 수정해 다시 확인해 보세요.
+                  기준에 맞지 않는 항목이 있으면 추천 주택을 볼 수 없어요. 조건을 수정해 다시 확인해 보세요.
                 </p>
               )}
               <div className="flex flex-wrap items-center justify-between gap-3">
@@ -213,7 +214,7 @@ function ResultContent({ condition }) {
                   disabled={!canProceed}
                   className="group inline-flex min-h-[44px] items-center gap-2 rounded-full bg-accent px-6 py-3 text-base font-medium text-accent-ink transition-[transform,background-color] duration-150 ease-out hover:bg-accent-hover active:scale-[0.97] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-ink disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-accent disabled:active:scale-100"
                 >
-                  맞춤 주택 보기
+                  추천 주택 보기
                   <ArrowIcon />
                 </button>
               </div>

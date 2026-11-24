@@ -42,8 +42,8 @@ const STEPS = [
   },
   {
     panel: 'listing',
-    title: '참고 주택',
-    body: '조건에 맞는 공고를 모집 상태와 참고 임대료와 함께 모아 보여줘요. 임대료순으로 정렬할 수도 있어요.',
+    title: '추천 주택',
+    body: '자격을 충족하고 접수 중인 공고를 희망 조건 점수로 골라 TOP 3로 보여주고, 지역·월세에 맞는 참고용 공고도 함께 모아 보여줘요.',
   },
 ]
 
@@ -128,7 +128,7 @@ function Fragment({ kind }) {
   if (kind === 'listing') {
     return (
       <FragmentCard
-        label="참고 주택 예시: 오산가장 경기행복주택, 보증금 2,618만원, 참고 월 임대료 12만 2,170원, 접수 마감"
+        label="참고용 공고 예시: 오산가장 경기행복주택, 보증금 2,618만원, 참고 월 임대료 12만 2,170원, 접수 마감"
         title="오산가장 경기행복주택"
         sub="행복주택 · 전용 21.5㎡ · 접수 마감 · 참고용"
       >
@@ -250,7 +250,7 @@ export default function MainPage() {
           <section aria-labelledby="steps-title" className="pb-16 pt-8 sm:pb-24 lg:pb-32">
             <h2 id="steps-title" className={sectionTitle}>
               <span className="block">조건 입력부터</span>
-              <span className="block">참고 주택까지 세 단계</span>
+              <span className="block">추천 주택까지 세 단계</span>
             </h2>
             <ol className="mt-12 flex flex-col gap-14 lg:gap-[22svh]">
               {STEPS.map((step) => (
