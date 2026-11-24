@@ -18,6 +18,23 @@ export const SUBSCRIPTION_OPTIONS = [
   { value: 'none', label: '미가입' },
 ]
 
+// 학생·구직 상태 (선택 입력). 정책 추천의 대학생·취업준비생 요건에 쓴다.
+export const ACTIVITY_OPTIONS = [
+  { value: '', label: '선택 안 함' },
+  { value: 'student', label: '대학생 (재학·휴학 포함)' },
+  { value: 'job_seeker', label: '취업준비생' },
+  { value: 'none', label: '해당 없음 (직장인 등)' },
+]
+
+// 선호 임대 방식. 정책 추천에서 같은 조건이면 이 방식의 정책을 먼저 고른다. (백엔드 rental_preference)
+export const RENTAL_PREFERENCE_OPTIONS = [
+  { value: 'public_complex', label: '공공임대 단지 (행복주택·통합공공임대)' },
+  { value: 'find_jeonse', label: '직접 찾은 집에 전세 (전세임대)' },
+  { value: 'existing_public_home', label: '기존 주택을 매입한 임대 (매입임대)' },
+  { value: 'private_rental', label: '민간임대 (공공지원민간임대)' },
+  { value: '', label: '상관없음' },
+]
+
 // 동 단위 지역은 공고 데이터에 동 정보(district)가 아직 없어 항상 0건이 나온다.
 // 데이터가 채워지기 전까지 선택하지 못하게 막아 둔다. (disabled: true 를 지우면 다시 열림)
 export const REGION_OPTIONS = [
@@ -47,7 +64,9 @@ export const INITIAL_VALUES = {
   marital_status: '',
   homeless_status: '',
   subscription_account: '',
+  student_status: '',
   region: 'all',
+  rental_preference: 'public_complex',
   max_rent: '',
   // 희망 조건 (모두 선택 입력). 백엔드 필드명이 정해지면 request.js 에서 매핑한다.
   desired_area: '',
@@ -67,7 +86,9 @@ export const EXAMPLE_VALUES = {
   marital_status: 'single',
   homeless_status: 'homeless',
   subscription_account: 'active',
+  student_status: '',
   region: 'all',
+  rental_preference: 'public_complex',
   max_rent: '',
   desired_area: '',
   max_deposit: '',
@@ -83,7 +104,7 @@ export const CONDITION_STEPS = [
     key: 'basic',
     title: '기본 정보',
     description: '정확한 판정을 위해 현재 기준의 정보를 간단히 선택해 주세요.',
-    fields: ['age', 'marital_status', 'homeless_status', 'subscription_account'],
+    fields: ['age', 'marital_status', 'homeless_status', 'subscription_account', 'student_status'],
   },
   {
     key: 'finance',
@@ -94,9 +115,10 @@ export const CONDITION_STEPS = [
   {
     key: 'preference',
     title: '희망 조건',
-    description: '참고용 주택 목록을 고를 때 쓰는 조건이에요. 비워 둬도 돼요.',
+    description: '정책 추천과 추천 주택을 고를 때 쓰는 조건이에요. 비워 둬도 돼요.',
     fields: [
       'region',
+      'rental_preference',
       'max_rent',
       'desired_area',
       'max_deposit',
@@ -233,7 +255,9 @@ export function toPayload(values) {
     marital_status: values.marital_status,
     homeless_status: values.homeless_status,
     subscription_account: values.subscription_account,
+    student_status: values.student_status || null,
     region: values.region,
+    rental_preference: values.rental_preference || null,
     max_rent: isBlank(values.max_rent) ? null : Number(values.max_rent),
     desired_area: isBlank(values.desired_area) ? null : Number(values.desired_area),
     max_deposit: isBlank(values.max_deposit) ? null : Number(values.max_deposit),
@@ -253,7 +277,9 @@ export function toFormValues(payload) {
     marital_status: payload.marital_status ?? '',
     homeless_status: payload.homeless_status,
     subscription_account: payload.subscription_account,
+    student_status: payload.student_status ?? '',
     region: payload.region,
+    rental_preference: payload.rental_preference === undefined ? 'public_complex' : (payload.rental_preference ?? ''),
     max_rent: payload.max_rent == null ? '' : String(payload.max_rent),
     desired_area: payload.desired_area == null ? '' : String(payload.desired_area),
     max_deposit: payload.max_deposit == null ? '' : String(payload.max_deposit),

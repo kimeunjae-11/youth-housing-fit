@@ -9,6 +9,7 @@ import SelectField from '../components/form/SelectField.jsx'
 import StepTracker from '../components/StepTracker.jsx'
 import { formatDate } from '../utils/format.js'
 import {
+  ACTIVITY_OPTIONS,
   CONDITION_STEPS,
   EXAMPLE_VALUES,
   FIELD_ORDER,
@@ -18,6 +19,7 @@ import {
   PRIORITY_OPTIONS,
   PRIORITY_SLOTS,
   REGION_OPTIONS,
+  RENTAL_PREFERENCE_OPTIONS,
   SUBSCRIPTION_OPTIONS,
   toFormValues,
   toPayload,
@@ -275,6 +277,15 @@ export default function ConditionPage() {
                   error={errors.subscription_account}
                   onChange={handleChange}
                 />
+                <SelectField
+                  name="student_status"
+                  label="학생·구직 상태"
+                  options={ACTIVITY_OPTIONS}
+                  optional
+                  value={values.student_status}
+                  error={errors.student_status}
+                  onChange={handleChange}
+                />
               </div>
             )}
 
@@ -327,13 +338,22 @@ export default function ConditionPage() {
                     error={errors.region}
                     onChange={handleChange}
                   />
+                  <SelectField
+                    name="rental_preference"
+                    label="선호 임대 방식"
+                    options={RENTAL_PREFERENCE_OPTIONS}
+                    optional
+                    value={values.rental_preference}
+                    error={errors.rental_preference}
+                    onChange={handleChange}
+                  />
                   <NumberField
                     name="max_rent"
                     label="월 임대료 상한"
                     optional
                     unit="만원"
                     placeholder="예: 30"
-                    hint="참고용 주택 목록에만 적용돼요. 자격 판정에는 쓰이지 않아요."
+                    hint="추천 주택 목록에 적용돼요. 자격 판정에는 쓰이지 않아요."
                     value={values.max_rent}
                     error={errors.max_rent}
                     onChange={handleChange}
