@@ -10,6 +10,7 @@ export function buildRankingNotices(items = []) {
   return items.map((item) => ({
     id: item.id,
     name: item.name,
+    address: item.address ?? null,
 
     // 동 단위 지역 정보는 현재 충분하지 않음
     region: null,
