@@ -1,37 +1,35 @@
-import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom'
+import Logo from './Logo.jsx'
+import StepTracker from './StepTracker.jsx'
+import { btnPill, focusRing } from './ui.js'
 
-// 시안: 자격 진단 탭은 조건 입력(/)·판정 결과(/result)에서 활성, 추천 주택(/recommend)에서는 비활성
-const DIAGNOSIS_PATHS = ['/condition', '/result']
-
-const tabBase =
-  'inline-flex min-h-[44px] items-center rounded-full px-4 text-[15px] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-ink'
+const STEP_BY_PATH = { '/condition': 1, '/result': 2, '/recommend': 3 }
 
 export default function Layout() {
-  const { pathname } = useLocation()
-  const diagnosisActive = DIAGNOSIS_PATHS.includes(pathname)
+  const { pathname, state } = useLocation()
+  const navigate = useNavigate()
+  const current = STEP_BY_PATH[pathname] ?? 1
+  // 판정 결과·추천 주택에서는 입력값을 들고 조건 입력으로 돌아간다
+  const canEdit = current > 1 && state?.condition
 
   return (
-    <div className="flex min-h-screen flex-col bg-canvas">
-      <header className="h-14 shrink-0 border-b border-line/80 bg-canvas">
-        <div className="flex h-full w-full items-center justify-between px-6 sm:px-8 lg:px-12 xl:px-16">
-          <Link
-            to="/"
-            className="rounded text-[17px] font-bold tracking-[-0.02em] text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-ink"
-          >
-            청년주거 핏
+    <div className="flex min-h-screen flex-col bg-fit-bg text-fit-ink">
+      <header className="border-b border-fit-line bg-white">
+        <div className="mx-auto flex min-h-[68px] w-full max-w-[1200px] flex-wrap items-center justify-between gap-x-6 gap-y-2 px-6 py-2">
+          <Link to="/" aria-label="청년주거 핏 메인으로" className={`inline-flex min-h-[44px] items-center rounded ${focusRing}`}>
+            <Logo />
           </Link>
-          <nav className="flex items-center gap-2">
-            <NavLink
-              to="/condition"
-              className={() =>
-                diagnosisActive
-                  ? `${tabBase} bg-accent-soft font-semibold text-ink`
-                  : `${tabBase} font-medium text-muted hover:bg-accent-soft hover:text-ink`
-              }
-            >
-              자격 진단
-            </NavLink>
-          </nav>
+          <StepTracker current={current} />
+          {canEdit ? (
+            <button type="button" onClick={() => navigate('/condition', { state: { condition: state.condition } })} className={btnPill}>
+              <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <path d="M4 20h4L19 9l-4-4L4 16z" />
+              </svg>
+              조건 수정
+            </button>
+          ) : (
+            <span className="hidden w-[110px] sm:block" aria-hidden="true" />
+          )}
         </div>
       </header>
 
@@ -39,14 +37,8 @@ export default function Layout() {
         <Outlet />
       </main>
 
-      <footer className="w-full shrink-0 border-t border-line/60 bg-canvas py-4">
-        <div className="flex w-full flex-wrap items-center gap-x-2 gap-y-1 px-6 text-[13px] text-muted sm:px-8 lg:px-12 xl:px-16">
-          <span className="font-bold text-ink">청년주거 핏</span>
-          <span>·</span>
-          <span>데이터 출처: LH·GH 행복주택 모집공고</span>
-          <span>·</span>
-          <span>판정 결과는 참고용이며 최종 자격은 공고문에서 확인하세요.</span>
-        </div>
+      <footer className="border-t border-fit-line2 px-6 py-6 text-center text-[13px] leading-[1.6] text-fit-muted">
+        판정 결과는 입력값을 바탕으로 한 참고용이에요. 최종 자격은 공고문에서 확인하세요. · 데이터 출처: LH·GH 행복주택 모집공고
       </footer>
     </div>
   )
