@@ -1,52 +1,40 @@
 const STEPS = ['조건 입력', '자격 판정', '추천 주택']
 
-// current: 1~3. detail: 현재 단계 옆에 붙는 보조 글자 (예: 조건 입력의 세부 단계). 이전 단계는 완료 표시, 이후 단계는 흐리게
-export default function StepTracker({ current, detail }) {
+// 헤더 가운데의 가로 단계 표시. current: 1~3. 지난 단계는 체크, 지금 단계는 앰버, 남은 단계는 테두리만.
+export default function StepTracker({ current }) {
   return (
-    <ol className="flex flex-col">
+    <ol aria-label="진행 단계" className="flex flex-wrap items-center gap-2">
       {STEPS.map((label, index) => {
         const step = index + 1
         const active = step === current
         const done = step < current
 
         return (
-          <li key={label} aria-current={active ? 'step' : undefined}>
-            {index > 0 && <div className="-my-0.5 ml-[1.1rem] h-3.5 w-0.5 bg-line" aria-hidden="true" />}
-            <div
-              className={`flex items-center gap-3.5 rounded-2xl ${
-                active ? 'bg-white p-3 ring-1 ring-stage-line/50' : 'p-2.5'
+          <li
+            key={label}
+            aria-current={active ? 'step' : undefined}
+            className={`flex items-center gap-2 text-[14px] ${active ? 'font-semibold text-fit-ink' : 'text-fit-muted'}`}
+          >
+            <span
+              className={`flex size-[26px] shrink-0 items-center justify-center rounded-full text-[13px] font-bold ${
+                done
+                  ? 'bg-fit-ink text-fit-bg'
+                  : active
+                    ? 'bg-fit-amber text-white'
+                    : 'border border-fit-border font-medium text-fit-muted'
               }`}
             >
-              <div
-                className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[13px] ${
-                  active || done
-                    ? 'bg-accent font-bold text-accent-ink'
-                    : 'bg-surface-container font-semibold text-muted'
-                }`}
-              >
-                {done ? (
-                  <span className="material-symbols-outlined text-[16px]" aria-hidden="true">
-                    check
-                  </span>
-                ) : (
-                  step
-                )}
-              </div>
-              <span
-                className={
-                  active
-                    ? 'text-[15px] font-bold text-ink'
-                    : done
-                      ? 'text-[14.5px] font-medium text-ink'
-                      : 'text-[14px] font-medium text-muted'
-                }
-              >
-                {label}
-                {active && detail && (
-                  <span className="ml-2 text-[13px] font-normal text-muted">{detail}</span>
-                )}
-              </span>
-            </div>
+              {done ? (
+                <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
+                  <path d="M5 12.5l4.5 4.5L19 7.5" />
+                </svg>
+              ) : (
+                step
+              )}
+            </span>
+            {label}
+            {done && <span className="sr-only">(완료)</span>}
+            {index < STEPS.length - 1 && <span aria-hidden="true" className="ml-1 hidden h-px w-8 bg-fit-border sm:block" />}
           </li>
         )
       })}

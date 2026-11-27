@@ -30,17 +30,27 @@ function buildPolicyRequest(condition) {
 }
 
 const STATUS_BADGE = {
-  potential_match: { label: '입력 조건에 맞는 후보', className: 'bg-ok-soft text-ok' },
-  needs_info: { label: '추가 확인 필요', className: 'bg-transparent text-accent-ink ring-1 ring-stage-line' },
+  potential_match: { label: '입력 조건에 맞는 후보', className: 'bg-[#E6ECDD] text-fit-ok' },
+  needs_info: { label: '추가 확인 필요', className: 'bg-fit-champagne text-fit-deep' },
 }
 
-function CheckList({ items, icon, iconClass }) {
+function CheckList({ items, positive }) {
   return (
-    <ul className="flex flex-col gap-1.5">
+    <ul className="flex flex-col gap-2">
       {items.map((item) => (
-        <li key={item} className="flex gap-2 text-[14px] text-ink">
-          <span className={`material-symbols-outlined mt-px text-[18px] ${iconClass}`} aria-hidden="true">
-            {icon}
+        <li key={item} className="flex gap-2 text-[15px] leading-[1.5] text-fit-muted">
+          <span className="mt-px shrink-0">
+            {positive ? (
+              <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10" fill="#4F6B3A" />
+                <path d="M7.5 12.5l3 3 6-6" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" />
+              </svg>
+            ) : (
+              <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8A4A1E" strokeWidth="2" strokeLinecap="round">
+                <circle cx="12" cy="12" r="9" />
+                <path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5v.4M12 16.5v.5" />
+              </svg>
+            )}
           </span>
           <span className="min-w-0 break-keep">{item}</span>
         </li>
@@ -73,70 +83,61 @@ export default function PolicyRecommendation({ condition }) {
     <section
       aria-labelledby="policy-heading"
       aria-busy={state.status === 'loading'}
-      className="flex flex-col gap-4 border-t border-line-soft pt-5"
+      className="flex flex-col gap-4 rounded-[18px] border border-fit-line2 bg-white p-7"
     >
-      <h2 id="policy-heading" className="text-[20px] font-semibold tracking-[-0.02em] text-accent-ink">
-        청년 주거정책 추천
-      </h2>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h2 id="policy-heading" className="text-[16px] font-bold">
+          청년 주거정책 추천
+        </h2>
+        {badge && <span className={`rounded-full px-2.5 py-1 text-[13px] font-semibold ${badge.className}`}>{badge.label}</span>}
+      </div>
 
       {state.status === 'loading' && (
-        <p role="status" className="text-[14px] text-muted">
+        <p role="status" className="text-[14px] text-fit-muted">
           입력하신 조건에 맞는 정책을 찾고 있어요…
         </p>
       )}
 
       {state.status === 'error' && (
-        <p role="alert" className="text-[14px] text-muted">
+        <p role="alert" className="text-[14px] text-fit-muted">
           {state.message}
         </p>
       )}
 
       {state.status === 'success' && !recommendation && (
-        <p className="text-[14px] text-muted">{state.data.message || '입력으로 추천할 정책 후보를 찾지 못했어요.'}</p>
+        <p className="text-[14px] text-fit-muted">{state.data.message || '입력으로 추천할 정책 후보를 찾지 못했어요.'}</p>
       )}
 
       {state.status === 'success' && recommendation && (
         <>
-          <div className="rounded-xl bg-accent-soft p-5">
-            <div className="mb-2 flex flex-wrap items-center gap-2">
-              <span className="rounded-full bg-white px-3 py-1 text-[13px] font-medium text-accent-ink">
-                {recommendation.supply_type}
-              </span>
-              {badge && (
-                <span className={`rounded-full px-3 py-1 text-[13px] font-semibold ${badge.className}`}>{badge.label}</span>
-              )}
-            </div>
-            <h3 className="text-[22px] font-semibold tracking-[-0.02em] text-accent-ink">{recommendation.name}</h3>
-            <p className="mt-1.5 break-keep text-[15px] leading-[1.6] text-ink">{recommendation.summary}</p>
+          <div>
+            <p className="text-[13px] text-fit-muted">{recommendation.supply_type}</p>
+            <h3 className="mt-1 font-serif text-[28px] font-medium tracking-[-0.02em]">{recommendation.name}</h3>
+            <p className="mt-2 break-keep text-[15px] leading-[1.6] text-fit-muted">{recommendation.summary}</p>
           </div>
 
-          <div className="grid gap-5 sm:grid-cols-2">
-            {recommendation.reasons?.length > 0 && (
-              <div>
-                <h4 className="mb-2 text-[15px] font-semibold text-ink">추천 이유</h4>
-                <CheckList items={recommendation.reasons} icon="check_circle" iconClass="text-ok" />
-              </div>
-            )}
-            {recommendation.to_verify?.length > 0 && (
-              <div>
-                <h4 className="mb-2 text-[15px] font-semibold text-ink">추가로 확인할 조건</h4>
-                <CheckList items={recommendation.to_verify} icon="help" iconClass="text-muted" />
-              </div>
-            )}
-          </div>
+          {recommendation.reasons?.length > 0 && (
+            <div>
+              <h4 className="mb-2 text-[14px] font-semibold">추천 이유</h4>
+              <CheckList items={recommendation.reasons} positive />
+            </div>
+          )}
+          {recommendation.to_verify?.length > 0 && (
+            <div>
+              <h4 className="mb-2 text-[14px] font-semibold">추가로 확인할 조건</h4>
+              <CheckList items={recommendation.to_verify} />
+            </div>
+          )}
 
           {recommendation.notice_checks?.length > 0 && (
-            <details className="group rounded-lg bg-surface-container-low px-4 py-3">
-              <summary className="flex min-h-[28px] cursor-pointer list-none items-center justify-between text-[14px] font-semibold text-ink">
+            <details className="group rounded-xl bg-fit-bg px-4 py-3">
+              <summary className="flex min-h-[44px] cursor-pointer list-none items-center justify-between text-[14px] font-semibold [&::-webkit-details-marker]:hidden">
                 모집공고에서 확인할 내용 {recommendation.notice_checks.length}가지
-                <span
-                  className="material-symbols-outlined text-[18px] text-muted transition-transform group-open:rotate-180"
-                  aria-hidden="true"
-                >
-                  expand_more
-                </span>
+                <svg aria-hidden="true" className="shrink-0 text-fit-muted transition-transform group-open:rotate-180" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                  <path d="M6 9l6 6 6-6" />
+                </svg>
               </summary>
-              <ul className="mt-2 list-disc space-y-0.5 pl-5 text-[14px] text-muted">
+              <ul className="mt-1 list-disc space-y-1 pl-5 text-[14px] leading-[1.6] text-fit-muted">
                 {recommendation.notice_checks.map((item) => (
                   <li key={item}>{item}</li>
                 ))}
@@ -145,7 +146,7 @@ export default function PolicyRecommendation({ condition }) {
           )}
 
           {recommendation.sources?.length > 0 && (
-            <p className="text-[13px] text-muted">
+            <p className="text-[13px] text-fit-muted">
               출처:{' '}
               {recommendation.sources.map((source, index) => (
                 <span key={source.url}>
@@ -154,7 +155,7 @@ export default function PolicyRecommendation({ condition }) {
                     href={source.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-medium text-accent-ink underline"
+                    className="font-medium text-fit-deep underline underline-offset-2"
                   >
                     {source.name}
                   </a>
@@ -163,7 +164,7 @@ export default function PolicyRecommendation({ condition }) {
             </p>
           )}
 
-          <p className="text-[13px] text-muted">
+          <p className="border-t border-fit-line pt-3.5 text-[13px] leading-[1.6] text-fit-muted">
             입력한 정보로 고른 정책 후보 1개예요. 실제 신청 자격은 개별 모집공고에서 확인해 주세요.
           </p>
         </>

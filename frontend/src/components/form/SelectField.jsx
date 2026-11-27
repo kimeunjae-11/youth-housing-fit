@@ -1,23 +1,15 @@
-import { FieldMessage, RequiredMark, labelClass } from './FieldShell.jsx'
+import { FieldMessage, OptionalMark, RequiredMark, labelClass } from './FieldShell.jsx'
+import { inputClass } from './fieldStyles.js'
 
-export default function SelectField({
-  name,
-  label,
-  options,
-  required = false,
-  optional = false,
-  value,
-  error,
-  onChange,
-}) {
+export default function SelectField({ name, label, options, required = false, optional = false, value, error, onChange }) {
   const messageId = `${name}-message`
 
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-2">
       <label htmlFor={name} className={labelClass}>
         {label}
         {required && <RequiredMark />}
-        {optional && <span className="text-[13px] font-normal text-muted">(선택)</span>}
+        {optional && <OptionalMark />}
       </label>
       <div className="relative">
         <select
@@ -28,11 +20,7 @@ export default function SelectField({
           aria-required={required}
           aria-invalid={Boolean(error)}
           aria-describedby={error ? messageId : undefined}
-          className={`h-[46px] w-full cursor-pointer appearance-none rounded-lg border bg-white px-3.5 pr-9 text-base font-medium text-ink transition-colors focus:outline-none focus:ring-2 ${
-            error
-              ? 'border-error focus:border-error focus:ring-error/20'
-              : 'border-line-strong focus:border-accent-ink focus:ring-accent/40'
-          }`}
+          className={`${inputClass(error)} cursor-pointer appearance-none pr-10`}
         >
           {options.map((option) => (
             <option key={option.value} value={option.value} disabled={option.disabled}>
@@ -40,12 +28,9 @@ export default function SelectField({
             </option>
           ))}
         </select>
-        <span
-          className="material-symbols-outlined pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[20px] text-muted"
-          aria-hidden="true"
-        >
-          expand_more
-        </span>
+        <svg aria-hidden="true" className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-fit-muted" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+          <path d="M6 9l6 6 6-6" />
+        </svg>
       </div>
       <FieldMessage id={messageId} error={error} />
     </div>
