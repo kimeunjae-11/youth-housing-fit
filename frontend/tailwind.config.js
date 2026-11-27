@@ -6,6 +6,22 @@ export default {
   theme: {
     extend: {
       colors: {
+        // ── 톤 B (2026-11-27 확정, 디자인 캔버스 '확정안' 기준) ──
+        // 기존 토큰은 화면을 옮기는 동안 그대로 두고, 새 화면은 fit-* 만 쓴다. 다 옮기면 기존 토큰을 지운다.
+        fit: {
+          bg: '#F7F2EA', // 페이지 바탕
+          card: '#FFFFFF', // 카드
+          ink: '#2E221C', // 본문·제목 글자, 푸터 바탕
+          muted: '#6B5B4F', // 보조 글자
+          amber: '#B5581C', // 주요 버튼 (흰 글자). 화면마다 채운 요소는 하나만
+          deep: '#8A4A1E', // 강조 글자, '확인 필요'
+          champagne: '#F1E6D2', // 연한 강조 바탕, 선택 상태
+          line: '#EDE3D3', // 표 구분선
+          line2: '#E8DDCB', // 카드 테두리
+          border: '#DCCFB9', // 입력창 테두리
+          ok: '#4F6B3A', // '충족'
+          mocha: '#5A4033', // 로고, 점수 숫자, 노을 이미지 건물
+        },
         // ── 공통 토큰: Stitch 시안 3화면이 함께 쓰는 값 ──
         canvas: '#FFF9F5', // 페이지 배경
         ink: '#2B2420', // 본문·제목 글자
@@ -88,6 +104,8 @@ export default {
         'listing-hover': '0 8px 26px rgba(160,100,70,0.08)',
       },
       fontFamily: {
+        // 제목·순위 숫자. index.html 에서 Noto Serif KR 500·600 을 불러온다
+        serif: ['"Noto Serif KR"', 'serif'],
         sans: [
           'Pretendard',
           '-apple-system',
